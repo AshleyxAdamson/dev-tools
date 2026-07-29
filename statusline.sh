@@ -69,7 +69,7 @@ elif [[ "$USE_NERDFONT" == "1" ]]; then
   S_PROMPT="❯"
   S_TIME="🕐 "
   S_COST=" "
-  S_CACHE="󰆼 "
+  S_CACHE="💡 "
   S_TTL="🕯️ "
   S_RATE="📅 "
   S_CACHE_TOK="⚡"
@@ -85,7 +85,7 @@ else
   S_PROMPT="❯"
   S_TIME="🕐 "
   S_COST=""
-  S_CACHE="◈ "
+  S_CACHE="💡 "
   S_TTL="🕯️ "
   S_RATE="📅 "
   S_CACHE_TOK="⚡"
@@ -361,7 +361,7 @@ if [[ -n "${transcript_path:-}" && -f "${transcript_path:-}" ]]; then
       else c_color="$GRAY"; fi
       read_h=$(human_tokens "$c_read")
       create_h=$(human_tokens "$c_create")
-      cache_section="${SEP}${c_color}${S_CACHE}${c_hit}%${RST} ${GRAY}${S_CACHE_TOK}${read_h}/${create_h}${RST}"
+      cache_section="${SEP}${c_color}${S_CACHE}${c_hit}%${RST}"
     fi
   fi
 fi
