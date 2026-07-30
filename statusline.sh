@@ -328,45 +328,6 @@ if [[ -n "$rate_parts" ]]; then
 fi
 
 # ═══════════════════════════════════════════════════════════════
-# Prompt cache 命中率（讀取 transcript 最後一則 usage）
-# ═══════════════════════════════════════════════════════════════
-
-# 把 token 數壓成人類可讀（1234 -> 1.2k）
-human_tokens() {
-  local n=${1:-0}
-  if (( n >= 1000 )); then
-    printf '%d.%dk' $(( n / 1000 )) $(( (n % 1000) / 100 ))
-  else
-    printf '%d' "$n"
-  fi
-}
-
-cache_section=""
-if [[ -n "${transcript_path:-}" && -f "${transcript_path:-}" ]]; then
-  # 只掃描尾端 200 行，取最後一筆帶 usage 的 assistant 訊息
-  cache_row=$(tail -n 200 "$transcript_path" 2>/dev/null | \
-    jq -rc 'select(.message.usage.cache_read_input_tokens != null)
-            | [ (.message.usage.input_tokens // 0),
-                (.message.usage.cache_read_input_tokens // 0),
-                (.message.usage.cache_creation_input_tokens // 0) ] | @tsv' 2>/dev/null | tail -1)
-  if [[ -n "$cache_row" ]]; then
-    IFS=$'\t' read -r c_in c_read c_create <<< "$cache_row"
-    c_in=${c_in:-0}; c_read=${c_read:-0}; c_create=${c_create:-0}
-    c_total=$(( c_in + c_read + c_create ))
-    if (( c_total > 0 )); then
-      c_hit=$(( c_read * 100 / c_total ))
-      # 顏色：高命中=綠、中=黃、冷起步=灰
-      if (( c_hit >= 80 )); then c_color="$GREEN"
-      elif (( c_hit >= 40 )); then c_color="$YELLOW"
-      else c_color="$GRAY"; fi
-      read_h=$(human_tokens "$c_read")
-      create_h=$(human_tokens "$c_create")
-      cache_section="${SEP}${c_color}${S_CACHE}${c_hit}%${RST}"
-    fi
-  fi
-fi
-
-# ═══════════════════════════════════════════════════════════════
 # Cache 保溫窗口倒數（距離上次活動 vs TTL）
 # ═══════════════════════════════════════════════════════════════
 # 顯示「還剩多久窗口」：每次互動都會把計時器重置回滿，閒置才倒數。
@@ -403,10 +364,11 @@ if [[ -n "${transcript_path:-}" && -f "${transcript_path:-}" ]]; then
         elif (( remaining <= warn_at )); then ttl_color="$YELLOW"
         else ttl_color="$GREEN"; fi
         # 蠟燭 icon 代表 cache 保溫；跟 session 時鐘視覺區隔
-        ttl_section="${SEP}${ttl_color}${S_TTL}${rem_fmt}${RST}"
+        # 放在第一行最前面，所以不帶前置分隔符（由組裝時補上尾隨 SEP）
+        ttl_section="${ttl_color}${S_TTL}${rem_fmt}${RST}"
       else
         # 窗口已過，cache 大概率已冷（蠟燭熄了）
-        ttl_section="${SEP}${GRAY}${S_TTL}cold${RST}"
+        ttl_section="${GRAY}${S_TTL}cold${RST}"
       fi
     fi
   fi
@@ -424,11 +386,14 @@ else prompt_color="$GREEN"; fi
 # 組裝第一行
 # ═══════════════════════════════════════════════════════════════
 
-line1="${PURPLE}${S_BRAND}${RST} ${CYAN}${model}${RST}"
+# 蠟燭（cache 保溫窗口倒數）移到最前面，後面接品牌鑽石 + 模型名
+line1=""
+if [[ -n "$ttl_section" ]]; then
+  line1+="${ttl_section}${SEP}"
+fi
+line1+="${PURPLE}${S_BRAND}${RST} ${CYAN}${model}${RST}"
 line1+="${SEP}${bar} ${pct_color}${pct_int}%${RST}${ctx_warn}${ctx_label}"
 line1+="${SEP}${cost_color}${S_COST}\$${cost_fmt}${RST}"
-line1+="${ttl_section}"
-line1+="${cache_section}"
 line1+="${dur_section}"
 line1+="${rate_section}"
 
@@ -464,5 +429,5 @@ done
 # 輸出
 # ═══════════════════════════════════════════════════════════════
 
-# 只輸出兩行（Claude Code 有自己的輸入提示符，不需要我們的 ❯）
-printf '%b\n%b' "$line1" "$line2"
+# 單行輸出：把兩段用分隔符接起來（Claude Code 有自己的輸入提示符）
+printf '%b' "${line1}${SEP}${line2}"
