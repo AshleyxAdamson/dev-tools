@@ -41,8 +41,29 @@ if [ -n "$other" ]; then
   exit 0
 fi
 
+# Beat the liveness heartbeat, but ONLY after the run is verified healthy. The
+# beat lands in LOOM's store (~/loom), because `loom maintain` reads the registry
+# from there every 4h and escalates whatever is OVERDUE — the absence of a beat
+# is what turns a silent death into an alarm. Never beat from anywhere but this
+# scheduled job: a human beating by hand would mask a dead scheduler.
+beat() {
+  local proof="$1"
+  if ! "$REPO/bin/check-memory-health.sh" >>"$LOG" 2>&1; then
+    say "NO BEAT invariants failing — see the health report above; liveness will go OVERDUE"
+    return 1
+  fi
+  if (cd /Users/ashley/loom && pebbl heartbeat dev-tools-memory --proof "$proof" >/dev/null 2>&1); then
+    say "beat dev-tools-memory ($proof)"
+  else
+    say "WARN heartbeat failed to record — liveness will go OVERDUE even though the run was fine"
+  fi
+}
+
 if [ -z "$(git status --porcelain -- pebbl-history)" ]; then
+  # A quiet day is a healthy day: the pipeline ran and there was nothing new, so
+  # it must still beat or every quiet stretch would false-alarm.
   say "nothing to commit"
+  beat "no new memory"
   exit 0
 fi
 
@@ -71,10 +92,12 @@ else
   say "FATAL commit failed"; exit 1
 fi
 
-# Push is best-effort: the fine-grained PAT has to grant this repo access, and
-# until it does the commit is still safely local.
+# The push is what gets memory OFF this machine, so a failure here is a real
+# degradation even though the commit is safely local — no beat, so liveness
+# escalates it rather than leaving it to be noticed by luck.
 if git push -q origin HEAD 2>>"$LOG"; then
   say "pushed"
+  beat "$(git rev-parse --short HEAD)"
 else
-  say "push failed (commit is local — check PAT access to the repo)"
+  say "push failed (commit is local — PAT expired or lost repo access); NOT beating"
 fi
