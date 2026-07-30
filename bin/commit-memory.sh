@@ -16,6 +16,21 @@ PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 say() { printf '%s  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" >> "$LOG"; }
 
+# launchd hands us a minimal PATH with no node, and node is needed twice: by the
+# privacy scan below and by this repo pre-commit hook. Resolve it once and put
+# its directory on PATH so both find it. nvm's version dir is globbed rather
+# than pinned so a node upgrade does not silently break the job.
+if ! command -v node >/dev/null 2>&1; then
+  for cand in /opt/homebrew/bin/node /usr/local/bin/node \
+              "$HOME"/.nvm/versions/node/*/bin/node; do
+    [ -x "$cand" ] && { PATH="$(dirname "$cand"):$PATH"; break; }
+  done
+fi
+if ! command -v node >/dev/null 2>&1; then
+  say "FATAL node not found — cannot run the privacy scan, refusing to commit"
+  exit 1
+fi
+
 cd "$REPO" || { say "FATAL cannot cd to $REPO"; exit 1; }
 
 # Never fight a human mid-edit: if anything outside the pebbl stores is dirty,
@@ -35,8 +50,16 @@ git add -- pebbl-history || { say "FATAL git add failed"; exit 1; }
 
 # The pre-commit hook runs the same scan, but check here too so a block is
 # recorded in this log with a readable reason instead of a bare non-zero exit.
-if ! scan=$(node /Users/ashley/pebbl/bin/pebbl.js privacy-scan --staged 2>&1); then
-  say "BLOCKED privacy-scan refused the staged memory — left staged for review"
+# Exit 1 means it found leaks; anything else means the scan itself broke, and a
+# scan that cannot run must never be reported as either clean or as a leak.
+scan=$(node /Users/ashley/pebbl/bin/pebbl.js privacy-scan --staged 2>&1)
+rc=$?
+if [ "$rc" -eq 1 ]; then
+  say "BLOCKED privacy-scan found leaks in the staged memory — left staged for review"
+  printf '%s\n' "$scan" >> "$LOG"
+  exit 1
+elif [ "$rc" -ne 0 ]; then
+  say "FATAL privacy-scan could not run (exit $rc) — refusing to commit unscanned memory"
   printf '%s\n' "$scan" >> "$LOG"
   exit 1
 fi
