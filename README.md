@@ -92,6 +92,56 @@ Run it by hand any time:
 ~/dev-tools/bin/commit-memory.sh
 ```
 
+## Not failing silently
+
+Every way this pipeline can break is quiet. Nothing throws when a launchd job
+stops firing, when a PAT expires, or when `~/pebbl/.pebbl` gets replaced by a
+real directory so pebbl writes memory that never reaches the repo. You just
+stop having history and find out months later.
+
+You cannot watch for an absence, so it is flipped into a presence: **the job
+beats a pebbl liveness heartbeat, and only after eight invariant checks pass.**
+`loom maintain` walks that registry every four hours under
+`com.loom.self-heal` and escalates whatever is OVERDUE, with an escalate-once
+ledger so a standing alarm does not re-page. No beat for 24h + 12h grace and
+loom raises it.
+
+```sh
+~/dev-tools/bin/check-memory-health.sh     # what is broken, right now
+~/dev-tools/bin/test-memory-health.sh      # prove the checks still catch faults
+cd ~/loom && pebbl liveness check          # is the beat current?
+```
+
+| Silent failure | Caught by |
+|---|---|
+| launchd job unloaded or never fires | no heartbeat → OVERDUE |
+| committer stuck skipping a dirty tree | no heartbeat, and the `uncommitted` age probe |
+| PAT expired, pushes failing | `push-auth` dry-run probe, and no heartbeat |
+| `~/pebbl/.pebbl` replaced by a real dir | `store-symlink` probe |
+| skill symlinks broken, Claude loses skills | `symlinks` probe |
+| gitignore regressed, derived files tracked | `tracked-set` probe |
+| repo moved back under `~/Documents` | `repo-location` probe |
+| commits piling up unpushed | `unpushed` drift probe |
+
+Three properties that matter more than the list:
+
+**The check reports, it never repairs.** Auto-fixing from a wrong diagnosis is
+how a small break becomes a big one.
+
+**Only the scheduled job may beat.** If running the check by hand could beat,
+then a human looking into things would mask a dead scheduler — hiding the exact
+failure being hunted.
+
+**The heartbeat re-registers its own contract every run.** Otherwise a reset of
+loom's store would drop the registration and the check would read green for a
+job it had quietly stopped watching. A monitor that can silently stop
+monitoring is no better than no monitor.
+
+`test-memory-health.sh` exists for the same reason: a monitor that has only
+ever returned green is indistinguishable from one that cannot fail. It breaks
+each invariant on purpose, asserts the check catches it, and restores under a
+trap.
+
 ## skills
 
 | Skill | What it does |
