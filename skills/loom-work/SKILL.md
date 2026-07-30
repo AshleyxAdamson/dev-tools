@@ -31,6 +31,17 @@ mode): one iteration now, then YOU decide when the next is worth running.
    this is what keeps the orchestrator lean enough to loop for hours. Never build
    inline in this session.
 
+   **Include the docs-naming rule in the subagent's brief** if the task may write
+   docs. The review guard blocks a non-Johnny-Decimal `.md` under `docs/`, and a
+   subagent that learns this from a `guard_blocked` verdict has burned a round for
+   a filename. Paste this in: *"Any .md you add under docs/ must be named
+   `NN.NN Title in sentence case.md` — 11 spike findings, 12 spike results,
+   13 plans, 14 research, 15 specs & PRDs, 16 handoffs, 17 runbooks & ops,
+   18 design notes. Never rename README.md, AGENTS.md, CLAUDE.md, SKILL.md,
+   CHANGELOG.md, SECURITY.md, LICENSE.md, docs/index.md, or anything under
+   prompts/ workflows/ .claude/ — tools and application code read those by exact
+   path."* Rules: `~/dev-tools/johnny-decimal-rules.md`.
+
 4. **REVIEW** — `loom review <id> <workdir> <test-cmd...>` (the test the subagent
    wrote). This is the gate: guard + harness test-probe + cross-family GLM + cost
    + record. PASS → landed (recorded under `<id>`). FAIL → feed the verdict back
@@ -72,7 +83,8 @@ file-watch over the queue file so a newly-added task wakes you immediately.
 One task per iteration · BUILD in a subagent · cross-family adversarial review
 with a recorded verdict · park after 2 fix rounds · the atomic claim (loom
 handles it — never build a task `loom next` didn't hand you) · read-first (honor
-`loom scope`). `loom doctor` before a long run; `loom reap` clears a dead
+`loom scope`) · Johnny Decimal names for docs under `docs/`, never for a
+fixed-name file. `loom doctor` before a long run; `loom reap` clears a dead
 session's stale lock.
 
 ## Working on a tracked repo outside the queue
