@@ -4,7 +4,7 @@ The one rule set for organizing files and folders across Ashley's machine.
 Canonical copy lives here in `dev-tools` (version-controlled). `~/.claude/CLAUDE.md`
 points at it, so every Claude Code session in every repo applies it.
 
-Check compliance with `dev-tools/bin/jd-check`.
+Check compliance with `dev-tools/bin/jd-check.sh`.
 
 ## Part 1 — The structure
 
