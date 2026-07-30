@@ -1,3 +1,0 @@
-compaction:
-  threshold: 10
-  fleeting_retention: 30
