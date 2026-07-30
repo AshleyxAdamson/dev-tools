@@ -39,25 +39,38 @@ design.md findings.md product.md smoke.md vendored.md"
 # Directories never scanned: build output, vendored code, tool state, and the
 # dirs whose .md files are program inputs rather than documentation.
 SKIP_DIRS=".git node_modules target .venv venv vendor dist build .next
-.pebbl .pytest_cache .frontloop .claude .cache site-packages __pycache__
-prompts workflows skill skills templates fixtures testdata"
+.pebbl .pytest_cache .frontloop .claude .agents .cache site-packages __pycache__
+prompts workflows skill skills templates fixtures testdata testbed"
 
-# Trees scanned when no path argument is given.
-DEFAULT_ROOTS="$HOME/loom $HOME/Documents/10.Code-Projects"
+# Trees scanned when no path argument is given: the repos actually worked on.
+# Not all of 10.Code-Projects — sweeping the 18 dormant projects buries the six
+# live ones in noise. Use --all-projects for the full sweep.
+ACTIVE_ROOTS="$HOME/loom
+$HOME/Documents/10.Code-Projects/lumr
+$HOME/Documents/10.Code-Projects/jig
+$HOME/Documents/10.Code-Projects/frontend-loop
+$HOME/Documents/10.Code-Projects/harold
+$HOME/Documents/10.Code-Projects/Terraform-for-Law
+$HOME/Documents/10.Code-Projects/lawyer-tool-rs"
+ALL_ROOTS="$HOME/loom $HOME/Documents/10.Code-Projects"
 
 SHOW_ADVISORY=0
+SCAN_ALL_PROJECTS=0
 ROOTS=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --all) SHOW_ADVISORY=1 ;;
-    -h|--help) sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --all-projects) SCAN_ALL_PROJECTS=1 ;;
+    -h|--help) sed -n '2,29p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     -*) echo "jd-check: unknown flag $1" >&2; exit 2 ;;
     *)  ROOTS="$ROOTS $1" ;;
   esac
   shift
 done
-[ -n "${ROOTS// /}" ] || ROOTS="$DEFAULT_ROOTS"
+if [ -z "${ROOTS// /}" ]; then
+  if [ $SCAN_ALL_PROJECTS -eq 1 ]; then ROOTS="$ALL_ROOTS"; else ROOTS="$ACTIVE_ROOTS"; fi
+fi
 
 # Build the find prune expression from SKIP_DIRS once, as an ARGUMENT ARRAY.
 # Not a string + eval: find's grouping parens are shell metacharacters, so an
@@ -103,6 +116,16 @@ for root in $ROOTS; do
     echo "jd-check: no such directory: $root" >&2
     exit 2
   fi
+  # A git repo nested INSIDE the scan root is someone else's code vendored or
+  # checked out as a fixture (jig/testbed/documenso is a whole third-party app).
+  # Its docs are not ours to rename, so prune every nested repo. This is the
+  # general rule; the `testbed` entry in SKIP_DIRS is just belt and braces.
+  NESTED=()
+  while IFS= read -r g; do
+    [ -n "$g" ] || continue
+    NESTED+=( -path "${g%/.git}/*" -prune -o )
+  done < <(find "$root" -mindepth 2 -name .git -maxdepth 8 -print 2>/dev/null)
+
   while IFS= read -r f; do
     [ -n "$f" ] || continue
     base=${f##*/}
@@ -118,7 +141,8 @@ for root in $ROOTS; do
       advisory_out="$advisory_out  $(basename "$root")/$rel"$'\n'
       advisory_count=$((advisory_count + 1))
     fi
-  done < <(find "$root" "${PRUNE[@]}" -type f -name '*.md' -print)
+  done < <(find "$root" "${NESTED[@]+${NESTED[@]}}" "${PRUNE[@]}" \
+             -type f -name '*.md' -print)
 done
 
 if [ $hard_count -gt 0 ]; then

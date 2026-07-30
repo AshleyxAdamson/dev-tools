@@ -77,6 +77,21 @@ Still open: `pebbl search` from `~/pebbl` only covers the live store. Mounting
 the archive under `~/pebbl/.pebbl/mirror/` would make all 125 entries
 searchable too — `pebbl migrate-to-events` is the lossless on-ramp.
 
+### The amnesia failure
+
+The one that looks like nothing. pebbl decides **per store** whether
+`events.jsonl` or `db.sqlite` is canonical. Because `.pebbl/` is gitignored
+inside `~/pebbl`, this store reaches the git-based fallback in `storeMode` and
+serves `db.sqlite` — a file this store deliberately does not keep. Every read
+then returns an empty store while the full history sits in `events.jsonl`. No
+error, no warning.
+
+`.events-canonical` is pebbl's positive completeness marker and pins reads to
+the fold. It is tracked, because it is a real store file, not a derived one. The
+`store-mode` probe restores it if it goes missing, but only after proving the
+fold holds as many entries as the log has append events — asserting completeness
+you have not verified is the one repair here that could actually lose history.
+
 ## Staying current
 
 `bin/commit-memory.sh` commits new memory once a day via launchd
@@ -122,11 +137,16 @@ cd ~/loom && pebbl liveness check          # is the beat current?
 | gitignore regressed, derived files tracked | `tracked-set` probe |
 | repo moved back under `~/Documents` | `repo-location` probe |
 | commits piling up unpushed | `unpushed` drift probe |
+| store silently reads EMPTY (amnesia) | `store-mode` probe |
 
 Three properties that matter more than the list:
 
-**The check reports, it never repairs.** Auto-fixing from a wrong diagnosis is
-how a small break becomes a big one.
+**The check repairs, and every repair is logged.** These invariants have exactly
+one correct state, so there is no diagnosis to get wrong. The guard against a
+band-aid: each repair writes to pebbl, so recurrence counts repeats and `loom
+maintain` escalates a thing that keeps breaking instead of letting it be
+re-fixed silently every night. Two things stay report-only and say so —
+relocating the repo, and an expired PAT that only GitHub settings can fix.
 
 **Only the scheduled job may beat.** If running the check by hand could beat,
 then a human looking into things would mask a dead scheduler — hiding the exact
