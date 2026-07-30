@@ -11,6 +11,7 @@
 set -uo pipefail
 
 REPO="/Users/ashley/dev-tools"
+PEBBL="/Users/ashley/pebbl/bin/pebbl.js"
 LOG="$REPO/.git/memory-commit.log"
 PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
@@ -52,7 +53,11 @@ beat() {
     say "NO BEAT invariants failing — see the health report above; liveness will go OVERDUE"
     return 1
   fi
-  if (cd /Users/ashley/loom && pebbl heartbeat dev-tools-memory --proof "$proof" >/dev/null 2>&1); then
+  # Invoke pebbl through node + its entry script, not the bare `pebbl` name:
+  # ~/bin is not on launchd's PATH, and a bare name here failed silently in
+  # exactly the way this whole heartbeat exists to prevent.
+  if (cd /Users/ashley/loom && node "$PEBBL" heartbeat dev-tools-memory \
+        --proof "$proof" >/dev/null 2>&1); then
     say "beat dev-tools-memory ($proof)"
   else
     say "WARN heartbeat failed to record — liveness will go OVERDUE even though the run was fine"
@@ -73,7 +78,7 @@ git add -- pebbl-history || { say "FATAL git add failed"; exit 1; }
 # recorded in this log with a readable reason instead of a bare non-zero exit.
 # Exit 1 means it found leaks; anything else means the scan itself broke, and a
 # scan that cannot run must never be reported as either clean or as a leak.
-scan=$(node /Users/ashley/pebbl/bin/pebbl.js privacy-scan --staged 2>&1)
+scan=$(node "$PEBBL" privacy-scan --staged 2>&1)
 rc=$?
 if [ "$rc" -eq 1 ]; then
   say "BLOCKED privacy-scan found leaks in the staged memory — left staged for review"
