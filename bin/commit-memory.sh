@@ -10,7 +10,7 @@
 # gitignored), so a run either commits one text file or does nothing.
 set -uo pipefail
 
-REPO="/Users/ashley/Documents/10.Code-Projects/dev-tools"
+REPO="/Users/ashley/dev-tools"
 LOG="$REPO/.git/memory-commit.log"
 PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
