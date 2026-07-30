@@ -1,0 +1,23 @@
+# ── pebbl live store (pebbl-history/live) ─────────────────────────────────────
+# ~/pebbl/.pebbl symlinks here, so this is a WORKING store, not an archive.
+# events.jsonl is the canonical append-only record; everything else pebbl
+# generates from it is derived and would only add churn (and binary diffs) to
+# the history. These are the same paths `pebbl init` writes into a project's
+# .gitignore — kept in step with src/init.js on purpose.
+pebbl-history/live/db.sqlite
+pebbl-history/live/view.sqlite
+pebbl-history/live/manual-logs.md
+pebbl-history/live/handoffs.md
+pebbl-history/live/commit-log.md
+pebbl-history/live/narrative.md
+pebbl-history/live/events-view.md
+pebbl-history/live/events.local.jsonl
+pebbl-history/live/*.lock
+pebbl-history/live/.rebuild-needed
+
+# The ARCHIVED store (pebbl-history/archive-*) is deliberately NOT listed here.
+# It is a legacy-mode store with no events.jsonl, so its db.sqlite IS the
+# canonical record and its .md files are the only readable form. Frozen, so it
+# never churns.
+
+.DS_Store
