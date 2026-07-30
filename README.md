@@ -46,7 +46,7 @@ differently because pebbl treats them differently.
 ### `live/` — the working store
 
 `~/pebbl/.pebbl` symlinks here, so pebbl writes into this repo as we work.
-Only **`events.jsonl`** is tracked: it is the canonical append-only record.
+Only **`events.jsonl`** and the `.events-canonical` marker are tracked: together they are the canonical record.
 `db.sqlite`, `view.sqlite` and the four markdown projections are derived from
 it and gitignored, using the same paths `pebbl init` writes into any project.
 That keeps the history one diffable text file instead of a churning binary.
@@ -115,7 +115,7 @@ real directory so pebbl writes memory that never reaches the repo. You just
 stop having history and find out months later.
 
 You cannot watch for an absence, so it is flipped into a presence: **the job
-beats a pebbl liveness heartbeat, and only after eight invariant checks pass.**
+beats a pebbl liveness heartbeat, and only after nine invariant checks pass.**
 `loom maintain` walks that registry every four hours under
 `com.loom.self-heal` and escalates whatever is OVERDUE, with an escalate-once
 ledger so a standing alarm does not re-page. No beat for 24h + 12h grace and
