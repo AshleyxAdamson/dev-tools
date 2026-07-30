@@ -53,11 +53,21 @@ beat() {
     say "NO BEAT invariants failing — see the health report above; liveness will go OVERDUE"
     return 1
   fi
+  # RE-REGISTER before beating, the way loom does for its own recurring jobs.
+  # Registration is idempotent (a re-register just refreshes the cadence), and
+  # without this the contract is not self-restoring: if loom's store were ever
+  # reset, the registration would vanish and `liveness check` would read GREEN
+  # off a registry that no longer watches this job — a monitor that silently
+  # stops monitoring. Emitter and registry stay together on purpose.
+  #
   # Invoke pebbl through node + its entry script, not the bare `pebbl` name:
   # ~/bin is not on launchd's PATH, and a bare name here failed silently in
   # exactly the way this whole heartbeat exists to prevent.
-  if (cd /Users/ashley/loom && node "$PEBBL" heartbeat dev-tools-memory \
-        --proof "$proof" >/dev/null 2>&1); then
+  if (cd /Users/ashley/loom \
+        && node "$PEBBL" liveness register dev-tools-memory \
+             --every 24h --grace 12h >/dev/null 2>&1 \
+        && node "$PEBBL" heartbeat dev-tools-memory \
+             --proof "$proof" >/dev/null 2>&1); then
     say "beat dev-tools-memory ($proof)"
   else
     say "WARN heartbeat failed to record — liveness will go OVERDUE even though the run was fine"
