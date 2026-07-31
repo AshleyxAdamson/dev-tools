@@ -4,3 +4,6 @@
 # symlink. Its ignore rules moved with it; see ~/pebbl/.gitignore.
 
 .DS_Store
+
+# vault-sync run log (local operational output)
+.vault-sync.log

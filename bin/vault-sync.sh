@@ -23,8 +23,20 @@
 #   manager immediately. Without it the Dropbox archive is undecryptable — a
 #   backup that fails in exactly the disaster it exists for.
 #
+# HOW IT RUNS. Two triggers, deliberately overlapping:
+#   1. The repo's post-commit hook, --archive-only. Every commit refreshes the
+#      archive, so the Dropbox copy is never more than one commit stale. This is
+#      the primary path.
+#   2. launchd com.ashley.vault-sync, weekly (Sun 21:00). A backstop for the two
+#      cases the hook cannot cover: the hook being lost (a pebbl re-init rewrites
+#      post-commit) and a long stretch with no commits, where the tree drifts
+#      from the last archive with no commit to trigger one.
+# A verified run beats a liveness heartbeat (7d / 3d grace), so a vault that
+# stops running becomes an alarm instead of a discovery made too late.
+#
 # Usage:
 #   vault-sync.sh <repo-path> [-m "commit message"]
+#   vault-sync.sh <repo-path> --archive-only    skip the commit (hook path)
 #   vault-sync.sh <repo-path> --verify-only     check the existing archive
 #
 # Restore (the whole point — keep this readable):
@@ -74,11 +86,15 @@ EOF
 }
 
 # ── args ─────────────────────────────────────────────────────────────────────
-REPO=""; MSG=""; VERIFY_ONLY=0
+REPO=""; MSG=""; VERIFY_ONLY=0; ARCHIVE_ONLY=0
 while [ $# -gt 0 ]; do
   case "$1" in
     -m|--message) MSG="${2:-}"; shift 2 ;;
     --verify-only) VERIFY_ONLY=1; shift ;;
+    # For the post-commit hook: git has ALREADY made the commit, so the commit
+    # half must be skipped. Without this the hook would try to commit again
+    # mid-hook, which at best is a no-op and at worst re-enters the hook.
+    --archive-only) ARCHIVE_ONLY=1; shift ;;
     -*) die "unknown flag $1" ;;
     *) REPO="$1"; shift ;;
   esac
@@ -126,7 +142,9 @@ fi
 # They are still backed up: the tar below archives the whole tree, tracked or
 # not. Which is the right split — the archive is private and replaceable, git
 # history is forever.
-if [ -n "$(git -C "$REPO" status --porcelain --untracked-files=no)" ]; then
+if [ "$ARCHIVE_ONLY" = "1" ]; then
+  say "archive-only — the commit already happened"
+elif [ -n "$(git -C "$REPO" status --porcelain --untracked-files=no)" ]; then
   git -C "$REPO" add -u || die "git add failed"
   msg="${MSG:-vault: checkpoint $(date '+%Y-%m-%d %H:%M')}"
   if git -C "$REPO" commit -q -m "$msg"; then
@@ -163,4 +181,17 @@ mv -f "$TMP/payload.gpg" "$ARCHIVE" || die "could not place the archive at $ARCH
 say "wrote $ARCHIVE ($(du -h "$ARCHIVE" | cut -f1))"
 
 verify_archive "$PASS" || die "the archive was written but did NOT verify — treat it as no backup"
+# Beat a liveness heartbeat, but ONLY after the archive verified. `loom maintain`
+# walks that registry every 4h and escalates whatever is OVERDUE, so a vault that
+# quietly stops running becomes an alarm rather than a discovery made too late.
+# Best-effort: a store that cannot be written must not turn a good backup into a
+# failure.
+if [ -x /Users/ashley/pebbl/bin/pebbl.js ] || [ -f /Users/ashley/pebbl/bin/pebbl.js ]; then
+  (cd /Users/ashley/loom \
+     && node /Users/ashley/pebbl/bin/pebbl.js liveness register "vault-$NAME" --every 7d --grace 3d >/dev/null 2>&1 \
+     && node /Users/ashley/pebbl/bin/pebbl.js heartbeat "vault-$NAME" \
+          --proof "$(du -h "$ARCHIVE" | cut -f1) verified" >/dev/null 2>&1) \
+    && say "beat vault-$NAME" || say "WARN heartbeat failed — liveness will go OVERDUE though the backup is fine"
+fi
+
 say "done — git history is local, one encrypted file is in Dropbox"
