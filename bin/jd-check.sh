@@ -31,16 +31,23 @@ JD_RE='^[0-9][0-9]\.[0-9][0-9] .+\.md$'
 
 # Fixed-name files: something other than a human reads these by exact name.
 # Compared lowercase, so README.md and readme.md both match.
+# Kept to the genuinely machine-read set. Convention names like PLAN.md, DESIGN.md,
+# and NOTES.md are deliberately NOT here: nothing reads them by path, so calling them
+# exempt would be a lie, and inside docs/ they should become 13.xx / 18.xx anyway.
+# Must stay identical to FIXED_DOC_NAMES in loom's src/capabilities/guard.ts.
 FIXED_NAMES="readme.md agents.md claude.md skill.md contributing.md security.md
 code_of_conduct.md changelog.md license.md licence.md index.md summary.md
-_sidebar.md _index.md _footer.md _navbar.md notes.md results.md plan.md
-design.md findings.md product.md smoke.md vendored.md"
+_sidebar.md _index.md _footer.md _navbar.md"
 
 # Directories never scanned: build output, vendored code, tool state, and the
 # dirs whose .md files are program inputs rather than documentation.
 SKIP_DIRS=".git node_modules target .venv venv vendor dist build .next
 .pebbl .pytest_cache .frontloop .claude .agents .cache site-packages __pycache__
-prompts workflows skill skills templates fixtures testdata testbed"
+prompts workflows skill skills templates fixtures testdata testbed
+handoffs"
+# `handoffs` is exempt because the pebbl-managed guidance block in each repo's
+# AGENTS.md recommends `docs/handoffs/<topic>.md` and pebbl REGENERATES that block,
+# so an edit there gets clobbered. Mirrors DOC_SKIP_SEGMENTS in loom's guard.ts.
 
 # Trees scanned when no path argument is given: the repos actually worked on.
 # Not all of 10.Code-Projects — sweeping the 18 dormant projects buries the six

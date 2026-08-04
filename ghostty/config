@@ -1,0 +1,23 @@
+# Ghostty config
+# Lives in dev-tools (versioned); ~/.config/ghostty/config symlinks here,
+# matching how the ~/.claude paths already work.
+#
+# Browse other presets: ghostty +list-themes
+# Reload after editing: Cmd+Shift+, (or just open a new window)
+
+# Dark purplish-blue, replaces Terminal.app's black.
+# Swap to "TokyoNight Storm" (#24283b) if #1a1b26 still reads too close to black.
+theme = TokyoNight
+background = 1a1b26
+background-opacity = 0.96
+
+# 24-bit color, so authored pastel palettes render as written
+# (Terminal.app quantized them to 256).
+
+# Scrollback for long agent runs
+scrollback-limit = 10000
+
+# Splits are native: Cmd+D right, Cmd+Shift+D down, Cmd+Opt+arrow to move,
+# Cmd+Shift+Enter to zoom. No prefix key, no config needed.
+# Caveat: Ghostty splits die with the window. Persistent agent work still
+# wants tmux panes, since Agent Deck sessions ARE tmux sessions.
