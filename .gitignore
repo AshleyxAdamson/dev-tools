@@ -7,3 +7,5 @@
 
 # vault-sync run log (local operational output)
 .vault-sync.log
+.pebbl/
+.pebbl/events.local.jsonl
