@@ -1,0 +1,201 @@
+/*
+Bear Graphite
+A personal Obsidian theme modeled on Bear's Dark Graphite look.
+Dark mode only. Light mode falls through to Obsidian's default colors.
+
+How it works: Obsidian's built-in stylesheet reads nearly all of its colors,
+fonts and sizes from CSS variables. Most of this file re-declares those
+variables. Direct rules appear only where no variable exists.
+Notebook Navigator exposes its own --nn-theme-* variables the same way.
+
+Colors were sampled from a Bear screenshot:
+  sidebar #2c2d2e, note list and editor #1d1e20, selected row #535354,
+  accent #45abf2.
+*/
+
+/* ---------- Fonts ---------- */
+
+body {
+  --font-interface-theme: "Avenir Next", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-text-theme: "Avenir Next", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ---------- Palette ---------- */
+
+/* Obsidian derives backgrounds, borders and text from this one gray scale:
+   00 = editor, 20 = sidebars, 30-40 = borders and controls,
+   50 = faint text, 70 = muted text, 100 = normal text. */
+.theme-dark {
+  --color-base-00: #1d1e20;
+  --color-base-05: #202123;
+  --color-base-10: #232426;
+  --color-base-20: #2c2d2e;
+  --color-base-25: #313233;
+  --color-base-30: #38393b;
+  --color-base-35: #434446;
+  --color-base-40: #535354;
+  --color-base-50: #6f7072;
+  --color-base-60: #8a8b8d;
+  --color-base-70: #b5b6b7;
+  --color-base-100: #e3e4e6;
+
+  /* #45abf2 as hue / saturation / lightness */
+  --accent-h: 205;
+  --accent-s: 87%;
+  --accent-l: 61%;
+
+  /* The accent is a light blue, so text sitting on it has to be dark. */
+  --text-on-accent: #0f1418;
+  --text-selection: hsla(205, 87%, 61%, 0.28);
+  --caret-color: var(--color-accent);
+
+  --background-modifier-hover: rgba(255, 255, 255, 0.055);
+  --background-modifier-active-hover: rgba(255, 255, 255, 0.12);
+
+  /* Pane edges take the sidebar color: no line next to the sidebar,
+     a faint one next to the editor. */
+  --divider-color: var(--color-base-20);
+
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: rgba(255, 255, 255, 0.08);
+  --scrollbar-active-thumb-bg: rgba(255, 255, 255, 0.2);
+}
+
+/* ---------- Typography ---------- */
+
+body {
+  --line-height-normal: 1.6;
+
+  --inline-title-size: 2em;
+  --inline-title-weight: 600;
+  --inline-title-line-height: 1.2;
+
+  --h1-size: 2em;
+  --h2-size: 1.5em;
+  --h3-size: 1.25em;
+  --h1-weight: 600;
+  --h2-weight: 600;
+  --h3-weight: 600;
+}
+
+.theme-dark {
+  --tag-color: var(--text-muted);
+  --tag-background: rgba(255, 255, 255, 0.08);
+  --tag-radius: 4px;
+  --blockquote-border-color: var(--color-accent);
+}
+
+/* ---------- Lists ---------- */
+
+body {
+  --list-marker-color: var(--color-accent);
+  --list-marker-color-hover: var(--color-accent);
+  --list-bullet-size: 0.36em;
+  --list-spacing: 0.2em;
+}
+
+/* Bear alternates bullets by depth: filled, hollow, filled, hollow.
+   .markdown-rendered is reading view; .HyperMD-list-line-N is the editor,
+   where N is the nesting depth. */
+.markdown-rendered ul ul > li > .list-bullet:after,
+.markdown-rendered ul ul ul ul > li > .list-bullet:after,
+.cm-s-obsidian .HyperMD-list-line-2 .list-bullet:after,
+.cm-s-obsidian .HyperMD-list-line-4 .list-bullet:after {
+  box-sizing: border-box;
+  background-color: transparent;
+  border: 1.5px solid var(--list-marker-color);
+}
+
+.markdown-rendered ul ul ul > li > .list-bullet:after,
+.cm-s-obsidian .HyperMD-list-line-3 .list-bullet:after {
+  background-color: var(--list-marker-color);
+  border: var(--list-bullet-border);
+}
+
+/* ---------- Window chrome (desktop only) ---------- */
+
+/* Everything here is scoped away from mobile, where these bars are the
+   only navigation. Apart from the status bar, chrome is faded with opacity
+   and comes back on hover, so no control is ever removed from the layout. */
+
+body:not(.is-mobile) .status-bar {
+  display: none;
+}
+
+/* Tab strip over the editor takes the editor color and loses its outlines. */
+.theme-dark {
+  --tab-outline-color: transparent;
+  --tab-divider-color: transparent;
+  --tab-background-active: transparent;
+  --tab-text-color: var(--text-faint);
+  --tab-text-color-focused-active: var(--text-muted);
+}
+
+.theme-dark .workspace-split.mod-root .workspace-tabs,
+.theme-dark .workspace-split.mod-root .sidebar-toggle-button {
+  --tab-container-background: var(--background-primary);
+}
+
+/* With a single tab open, its label and the new-tab buttons stay hidden
+   until the pointer is over the strip. */
+body:not(.is-mobile) .mod-root .workspace-tab-header-container:not(:has(.workspace-tab-header ~ .workspace-tab-header)) :is(.workspace-tab-header, .workspace-tab-header-new-tab, .workspace-tab-header-tab-list) {
+  opacity: 0;
+  transition: opacity 150ms ease-in-out;
+}
+
+body:not(.is-mobile) .mod-root .workspace-tab-header-container:not(:has(.workspace-tab-header ~ .workspace-tab-header)):hover :is(.workspace-tab-header, .workspace-tab-header-new-tab, .workspace-tab-header-tab-list) {
+  opacity: 1;
+}
+
+/* The note already shows its title as the big inline title, so the copy in
+   the header bar and the back/forward arrows fade out until hover.
+   Tied to .show-inline-title: turn that setting off and they come back. */
+body.show-inline-title:not(.is-mobile) .workspace-leaf-content[data-type="markdown"] .view-header :is(.view-header-left, .view-header-title-container) {
+  opacity: 0;
+  transition: opacity 150ms ease-in-out;
+}
+
+body.show-inline-title:not(.is-mobile) .workspace-leaf-content[data-type="markdown"] .view-header:hover :is(.view-header-left, .view-header-title-container) {
+  opacity: 1;
+}
+
+/* Vault name, help and settings row at the bottom of the left sidebar. */
+body:not(.is-mobile) .workspace-sidedock-vault-profile {
+  opacity: 0.25;
+  transition: opacity 150ms ease-in-out;
+}
+
+body:not(.is-mobile) .workspace-sidedock-vault-profile:hover {
+  opacity: 1;
+}
+
+/* ---------- Notebook Navigator ---------- */
+
+/* body.theme-dark outranks the plugin's own `body` defaults. */
+body.theme-dark {
+  --nn-theme-nav-bg: var(--background-secondary);
+  --nn-theme-list-bg: var(--background-primary);
+  --nn-theme-divider-border-color: transparent;
+
+  /* Tag rows */
+  --nn-theme-navitem-name-color: var(--text-muted);
+  --nn-theme-navitem-icon-color: var(--text-muted);
+  --nn-theme-navitem-chevron-color: var(--text-faint);
+  --nn-theme-navitem-border-radius: 6px;
+  --nn-theme-navitem-hover-bg: rgba(255, 255, 255, 0.05);
+  --nn-theme-navitem-selected-bg: var(--color-base-40);
+  --nn-theme-navitem-selected-inactive-bg: var(--color-base-35);
+  --nn-theme-navitem-selected-name-color: var(--text-normal);
+  --nn-theme-navitem-selected-icon-color: var(--text-normal);
+
+  /* Note list */
+  --nn-theme-file-name-color: var(--text-normal);
+  --nn-theme-file-name-font-weight: 600;
+  --nn-theme-file-preview-color: var(--text-muted);
+  --nn-theme-file-date-color: var(--text-faint);
+  --nn-theme-file-border-radius: 6px;
+  --nn-theme-file-selected-bg: rgba(255, 255, 255, 0.08);
+  --nn-theme-file-selected-inactive-bg: rgba(255, 255, 255, 0.05);
+  --nn-theme-list-separator-color: var(--color-base-30);
+  --nn-theme-list-group-header-color: var(--text-faint);
+}
