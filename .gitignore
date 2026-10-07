@@ -7,5 +7,20 @@
 
 # vault-sync run log (local operational output)
 .vault-sync.log
-.pebbl/
+
+# This repo's own pebbl store, in SHARED mode: events.jsonl is committed and
+# everything below is derived from it or private to this machine. The files
+# are ignored by name because git does not look inside a blanket-ignored
+# directory, so a `.pebbl/` line here would keep events.jsonl out too.
 .pebbl/events.local.jsonl
+.pebbl/view.sqlite
+.pebbl/db.sqlite
+.pebbl/manual-logs.md
+.pebbl/handoffs.md
+.pebbl/commit-log.md
+.pebbl/narrative.md
+.pebbl/events-view.md
+.pebbl/*.lock
+.pebbl/.rebuild-needed
+.pebbl/name-map.json
+!.pebbl/events.jsonl
