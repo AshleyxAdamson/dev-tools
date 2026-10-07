@@ -10,7 +10,7 @@ there is never a live copy quietly drifting from a repo copy.
 |---|---|
 | `skills/` | The eight Claude Code skills I authored. |
 | `statusline/` | The Claude Code status line I use, with its full history. |
-| `bin/` | Health checks for this repo's symlinks, and the Johnny Decimal name checker. |
+| `bin/` | Health checks for this repo's symlinks, the Johnny Decimal name checker, and the Obsidian tag checker. |
 
 ## Symlinks
 
@@ -35,6 +35,26 @@ the alternative is a copy in each location, and a copy has no way to tell you
 it went stale. This session started by finding exactly that failure — two
 clones of pebbl, one of them the real one, and nobody could tell which by
 looking.
+
+## tag-check
+
+`bin/tag-check.py` lists tags in the Obsidian vault that sit outside the allowed
+branches. Obsidian trusts any tag it is handed, so an importer or a generator can
+fill the tag tree with strangers and nothing says where they came from.
+
+```sh
+~/dev-tools/bin/tag-check.py                  # list strangers (exit 1 if any)
+~/dev-tools/bin/tag-check.py --allow travel   # a new branch: keep it
+~/dev-tools/bin/tag-check.py --ignore pride   # a hashtag in note text: stop flagging it
+```
+
+The list holds branches, so `projects` allows `projects/anything` and a new
+sub-tag costs nothing. Only a new top-level tag gets flagged. It reports and
+never edits a note.
+
+The script lives here; the list lives in the vault at `.obsidian/tag-roots.txt`.
+The list names private topics and belongs to the vault, so it stays out of this
+repo and moves if the vault moves.
 
 ## pebbl's memory moved out
 
@@ -68,6 +88,7 @@ harness, and its own liveness heartbeat — `cd ~/pebbl && bash ops/check-memory
 ```sh
 ~/dev-tools/bin/check-dev-tools-health.sh   # symlinks + location
 ~/dev-tools/bin/test-jd-check.sh            # the Johnny Decimal checker's own tests
+~/dev-tools/bin/test-tag-check.sh           # the Obsidian tag checker's own tests
 ```
 
 | Silent failure | Caught by |

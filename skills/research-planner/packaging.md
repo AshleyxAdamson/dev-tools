@@ -50,7 +50,7 @@ Before rendering, the prose must read like Ashley wrote it, not like an AI. Run 
 - **Lead with the answer.** No windup, no "In this section we will." Start on the noun or verb.
 - **No filler summaries.** Cut any section that only restates what the reader just read ("The plainest summary," "In conclusion," a recap that adds no new decision or action). A *ranked* list of next actions earns its place; a paragraph that re-says the chapter does not. When in doubt, delete it.
 - **No AI tells:** em dashes (use a hyphen or restructure), "It's not X, it's Y," prestige words (delve, leverage, robust, nuanced), hedge stacks, filler affirmations. Use contractions; vary sentence length.
-- **Plain-first for a lay audience.** For anything with more than one moving part, open with a plain-language anchor or everyday analogy before the technical term. If a reader hits two pieces of jargon before an anchor, rewrite.
+- **Plain-first for a lay audience.** For anything with more than one moving part, describe the thing itself in plain words before the technical term. No analogies or metaphors. If a reader hits two pieces of jargon before a plain-words explanation, rewrite.
 - **Grade honestly inline** and never launder a low-evidence claim into a confident number.
 
 ## Rendering — designed PDF, not raw markdown
