@@ -8,7 +8,7 @@ there is never a live copy quietly drifting from a repo copy.
 
 | Folder | What it is |
 |---|---|
-| `skills/` | The eight Claude Code skills I authored. |
+| `skills/` | The nine Claude Code skills I authored. |
 | `statusline/` | The Claude Code status line I use, with its full history. |
 | `bin/` | Health checks for this repo's symlinks, the Johnny Decimal name checker, and the Obsidian tag checker. |
 
@@ -17,7 +17,7 @@ there is never a live copy quietly drifting from a repo copy.
 Nothing here is copied into place. These paths point at this repo:
 
 ```
-~/.claude/skills/<name>   ->  dev-tools/skills/<name>      (8 skills)
+~/.claude/skills/<name>   ->  dev-tools/skills/<name>      (9 skills)
 ~/.claude/statusline.sh   ->  dev-tools/statusline/statusline.sh
 ```
 
@@ -81,7 +81,7 @@ tracked paths, so a tracked `events.jsonl` can no longer be pushed back onto the
 ## Not failing silently
 
 `bin/check-dev-tools-health.sh` verifies and repairs what this repo still owns:
-the eight skill symlinks, the statusline symlink, and the TCC constraint on where
+the nine skill symlinks, the statusline symlink, and the TCC constraint on where
 the repo may live. pebbl's own pipeline has its own check, its own fault-injection
 harness, and its own liveness heartbeat — `cd ~/pebbl && bash ops/check-memory-health.sh`.
 
@@ -102,6 +102,7 @@ harness, and its own liveness heartbeat — `cd ~/pebbl && bash ops/check-memory
 |---|---|
 | `activity-check` | Mac activity diagnostic — CPU, memory pressure, swap, sleep preventers |
 | `anti-ai-prose` | Makes writing sound like me instead of like AI. `RULES.md` is the canonical list; `anti_ai_checker.py` validates |
+| `commander-deck` | Builds, tunes or reviews a Magic Commander deck from a brief with the mtg-cards MCP tools from [MTG-Deck-Builder](https://github.com/AshleyxAdamson/MTG-Deck-Builder): rules file, role counts, candidates, checks, table feel. `baseline.md` holds the numbers |
 | `design-spike` | Fans out several distinct UI directions as openable HTML mockups on real data, critiques them adversarially (scored, attacked, not praised), then recommends a base plus grafts |
 | `flare-strategy` | Consultant on FLARE forward-looking active-retrieval strategy for an agent, and generates the prompt scaffold |
 | `loom-refine` | Self-paced loop that refines the loom factory itself |
