@@ -17,7 +17,7 @@ there is never a live copy quietly drifting from a repo copy.
 Nothing here is copied into place. These paths point at this repo:
 
 ```
-~/.claude/skills/<name>   ->  dev-tools/skills/<name>      (9 skills)
+~/.claude/skills/<name>   ->  dev-tools/skills/<name>      (8 skills)
 ~/.claude/statusline.sh   ->  dev-tools/statusline/statusline.sh
 ```
 
@@ -102,7 +102,6 @@ harness, and its own liveness heartbeat — `cd ~/pebbl && bash ops/check-memory
 |---|---|
 | `activity-check` | Mac activity diagnostic — CPU, memory pressure, swap, sleep preventers |
 | `anti-ai-prose` | Makes writing sound like me instead of like AI. `RULES.md` is the canonical list; `anti_ai_checker.py` validates |
-| `commander-deck` | Builds, tunes or reviews a Magic Commander deck from a brief with the mtg-cards MCP tools from [MTG-Deck-Builder](https://github.com/AshleyxAdamson/MTG-Deck-Builder): rules file, role counts, candidates, checks, table feel. `baseline.md` holds the numbers |
 | `design-spike` | Fans out several distinct UI directions as openable HTML mockups on real data, critiques them adversarially (scored, attacked, not praised), then recommends a base plus grafts |
 | `flare-strategy` | Consultant on FLARE forward-looking active-retrieval strategy for an agent, and generates the prompt scaffold |
 | `loom-refine` | Self-paced loop that refines the loom factory itself |

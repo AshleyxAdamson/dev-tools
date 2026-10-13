@@ -20,7 +20,7 @@ set -uo pipefail
 
 REPO="/Users/ashley/dev-tools"
 PEBBL="/Users/ashley/pebbl/bin/pebbl.js"
-SKILLS="activity-check anti-ai-prose commander-deck design-spike flare-strategy loom-refine loom-work research-planner skill-builder"
+SKILLS="activity-check anti-ai-prose design-spike flare-strategy loom-refine loom-work research-planner skill-builder"
 
 JSON=0; REPAIR=1; FIX_LOCATION=0
 for a in "$@"; do
@@ -107,7 +107,7 @@ check_symlinks() {
   fi
 
   if [ -z "$broken" ]; then
-    ok symlinks "9 skills + statusline resolve into the repo"
+    ok symlinks "8 skills + statusline resolve into the repo"
   elif [ -z "$still" ]; then
     fixed symlinks "relinked:$repaired"
   else
