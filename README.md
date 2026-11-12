@@ -108,6 +108,7 @@ harness, and its own liveness heartbeat — `cd ~/pebbl && bash ops/check-memory
 | `loom-work` | Works the loom queue as an interactive line worker |
 | `research-planner` | Six-phase research protocol — find the hinge, red-team the plan, tier the subagents, grade the evidence |
 | `skill-builder` | Builds a new skill, or audits and shrinks an existing one |
+| `video-grab` | Pulls timed screens, the transcript and the video file from YouTube videos into a folder an agent can read, for studying a product from its demo videos |
 
 Deliberately **not** here: the open-design pack (`design-craft`,
 `design-review`, `frontend-design`, `shadcn-ui`, `theme-factory`,
