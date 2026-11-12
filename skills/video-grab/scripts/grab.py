@@ -29,6 +29,8 @@ YT_SLOTS = 2  # yt-dlp calls at once on this machine, however many agents run it
 LOCKS = Path.home() / ".cache" / "video-grab"
 OLD_AFTER_YEARS = 3
 SHEET_COLS, SHEET_ROWS, THUMB_W, LABEL_H = 4, 3, 480, 26
+# A URL copied from a playlist page carries &list=, and yt-dlp then takes the whole playlist. fetch is one video.
+ONE_VIDEO = ["--no-playlist", "--playlist-items", "1"]
 
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess:
@@ -62,6 +64,11 @@ def youtube_slot():
 def video_url(url_or_id: str) -> str:
     s = url_or_id.strip()
     return "https://www.youtube.com/watch?v=" + s if re.fullmatch(r"[\w-]{11}", s) else s
+
+
+def dash_ids(argv: list[str]) -> list[str]:
+    """A video id may start with '-', which argparse reads as a flag: hand it over as its URL. No flag is 11 long."""
+    return [video_url(a) if re.fullmatch(r"-[\w-]{10}", a) else a for a in argv]
 
 
 def label(seconds: float) -> str:
@@ -147,6 +154,21 @@ def frame_names(times: list[float]) -> list[str]:
     return names
 
 
+def cut_before(frames: Path) -> list[Path]:
+    """The frames an earlier cut left, which a new cut replaces. Frames `at` wrote (at-*.jpg) stay."""
+    return [p for p in frames.glob("*.jpg") if not p.name.startswith("at-")]
+
+
+def hide_from_git(out: Path, folder: Path) -> None:
+    """Other people's videos and screens never go into a repo by accident: `*` in a .gitignore in `out`, or in the
+    video's own folder when `out` already has a .gitignore that lets files through."""
+    ignore = out / ".gitignore"
+    if not ignore.exists():
+        ignore.write_text("*\n", encoding="utf-8")
+    elif "*" not in ignore.read_text(encoding="utf-8").split():
+        (folder / ".gitignore").write_text("*\n", encoding="utf-8")
+
+
 # ---------- search ----------
 def search(query: str, n: int, after: str | None) -> int:
     fields = "%(id)s\t%(upload_date)s\t%(duration)s\t%(view_count)s\t%(channel)s\t%(title)s"
@@ -178,9 +200,10 @@ def cut_frames(video: Path, frames: Path, duration: float, max_frames: int, ever
     every = max(every, duration / max_frames) if duration else every
     threshold = 0.1
     while True:
-        for old in frames.glob("*.jpg"):
+        for old in cut_before(frames):
             old.unlink()
-        pick = f"gt(scene,{threshold})+isnan(prev_selected_t)+gte(t-prev_selected_t,{every:.1f})"
+        # gt(n,1): ffmpeg scores the second frame against nothing, so any motion at the start reads as a new scene
+        pick = f"gt(scene,{threshold})*gt(n,1)+isnan(prev_selected_t)+gte(t-prev_selected_t,{every:.1f})"
         r = run(["ffmpeg", "-y", "-hide_banner", "-i", str(video), "-vf",
                  f"select='{pick}',showinfo,scale='min(1600,iw)':-2", "-fps_mode", "vfr", "-q:v", "3",
                  str(frames / "raw-%05d.jpg")])
@@ -241,7 +264,7 @@ def fetch_captions(url: str, folder: Path, tries: int = 3, wait: float = 30) -> 
     for attempt in range(tries):
         with youtube_slot():
             r = run(["yt-dlp", "--skip-download", "--write-subs", "--write-auto-subs", "--sub-langs", "en,en-orig",
-                     "--sub-format", "vtt", "--sleep-subtitles", "2", "--no-warnings",
+                     "--sub-format", "vtt", "--sleep-subtitles", "2", "--no-warnings", *ONE_VIDEO,
                      "-o", str(folder / "source.%(ext)s"), url])
         stderr = r.stderr
         subs = sorted(folder.glob("source.*.vtt"), key=lambda p: ("orig" in p.name, len(p.name)))
@@ -260,11 +283,8 @@ def fetch_captions(url: str, folder: Path, tries: int = 3, wait: float = 30) -> 
 def fetch(url_or_id: str, out: Path, max_frames: int, every: float, drop_video: bool, height: int) -> int:
     url = video_url(url_or_id)
     out.mkdir(parents=True, exist_ok=True)
-    ignore = out / ".gitignore"
-    if not ignore.exists():  # other people's videos and screens never go into a repo by accident
-        ignore.write_text("*\n", encoding="utf-8")
     with youtube_slot():
-        r = run(["yt-dlp", "--dump-json", "--no-download", "--no-warnings", url])
+        r = run(["yt-dlp", "--dump-json", "--no-download", "--no-warnings", *ONE_VIDEO, url])
     if r.returncode != 0:
         print("can't read the video: " + r.stderr.strip()[-300:], file=sys.stderr)
         return 1
@@ -273,9 +293,10 @@ def fetch(url_or_id: str, out: Path, max_frames: int, every: float, drop_video: 
     frames, sheets = folder / "frames", folder / "sheets"
     for d in (frames, sheets):
         d.mkdir(parents=True, exist_ok=True)
+    hide_from_git(out, folder)
     with youtube_slot():
         r = run(["yt-dlp", "-f", f"bv*[height<={height}]+ba/b[height<={height}]", "--merge-output-format", "mp4",
-                 "--no-warnings", "-o", str(folder / "source.%(ext)s"), url])
+                 "--no-warnings", *ONE_VIDEO, "-o", str(folder / "source.%(ext)s"), url])
     video = folder / "source.mp4"
     if not video.exists():
         print("download failed: " + r.stderr.strip()[-300:], file=sys.stderr)
@@ -338,7 +359,7 @@ def main() -> int:
     a = sub.add_parser("at", help="cut a full-size frame at exact times from a fetched video")
     a.add_argument("folder", type=Path)
     a.add_argument("times", nargs="+")
-    args = p.parse_args()
+    args = p.parse_args(dash_ids(sys.argv[1:]))
     if args.cmd == "search":
         return search(args.query, args.n, args.after)
     if args.cmd == "fetch":

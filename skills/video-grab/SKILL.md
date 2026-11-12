@@ -5,8 +5,6 @@ description: Pull timed screens, the transcript and the video file from YouTube 
 
 # Video Grab
 
-Turns a YouTube video into evidence an agent can cite: every claim points at a video and a time.
-
 `G=~/.claude/skills/video-grab/scripts/grab.py`. Needs `yt-dlp`, `ffmpeg` and `uv`.
 
 ## Steps
@@ -25,9 +23,9 @@ What `fetch` writes to `<folder>/<video-id>/`:
 |---|---|
 | `meta.json` | Title, channel, URL, upload date, `age` (flags OLD at three years), length, counts |
 | `transcript.txt` | The captions as `[m:ss] text`, one line per 15 seconds. Automatic captions mishear names. When YouTube refuses the captions the file says so: fetch again later, and read the screens meanwhile |
-| `frames/01m23s.jpg` | A frame at each change of scene and at least one every 20 seconds (`--every`), named by its time |
+| `frames/01m23s.jpg` | A frame at each change of scene and at least one every 20 seconds (`--every`; further apart when that would pass `--max-frames`, 60), named by its time |
 | `frames.tsv` | Each frame's file and time |
 | `sheets/sheet-NN.jpg` | Contact sheets of the frames |
 | `source.mp4` | The video, kept so `at` can cut more frames. `--drop-video` deletes it |
 
-`fetch` puts a `.gitignore` holding `*` in `<folder>`: the videos and screens are other people's work, kept on this machine for study and never committed or republished. Write-ups cite the URL and time, and describe a screen in words.
+`fetch` keeps what it writes out of git with a `.gitignore` holding `*`: the videos and screens are other people's work, kept on this machine for study and never committed or republished. Write-ups describe a screen in words.

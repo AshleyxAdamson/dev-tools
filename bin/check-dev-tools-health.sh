@@ -107,7 +107,7 @@ check_symlinks() {
   fi
 
   if [ -z "$broken" ]; then
-    ok symlinks "8 skills + statusline resolve into the repo"
+    ok symlinks "$(echo $SKILLS | wc -w | tr -d ' ') skills + statusline resolve into the repo"
   elif [ -z "$still" ]; then
     fixed symlinks "relinked:$repaired"
   else
