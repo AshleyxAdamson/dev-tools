@@ -34,7 +34,7 @@ on wavespeed. Reference images are `image_urls`, `image_input`, `input_urls`,
 build_input() does the translation. Adding a model = adding a row, never editing
 the request code.
 """
-import argparse, json, os, re, sys, time, urllib.request, urllib.error, base64, mimetypes
+import argparse, json, os, re, subprocess, sys, time, urllib.request, urllib.error, base64, mimetypes
 from datetime import datetime, timezone
 
 # ---------------------------------------------------------------------------
@@ -50,6 +50,7 @@ from datetime import datetime, timezone
 #   extra  fixed params always sent
 #   edit   variant used when --ref is passed: {"slug":..., "refs": <field name>}
 #          absent = this host can't take reference images for this model
+#   needs_ref  True on an edit-only endpoint: refuse to run without --ref
 #
 # Slugs + fields verified against live provider docs/OpenAPI on 2026-08-02.
 # Costs drift constantly and several models price by resolution - treat them as
@@ -70,13 +71,16 @@ REGISTRY = {
         "kie": {"slug": "nano-banana-pro", "cost": 0.10, "aspect": "aspect_ratio",
                 "seed": None, "batch": None,
                 "edit": {"slug": "nano-banana-pro", "refs": "image_input"}},
-        "fal": {"slug": "fal-ai/nano-banana-pro", "cost": 0.12, "aspect": "aspect_ratio",
+        "fal": {"slug": "fal-ai/nano-banana-pro", "cost": 0.15, "aspect": "aspect_ratio",
                 "seed": "seed", "batch": "num_images",
                 "edit": {"slug": "fal-ai/nano-banana-pro/edit", "refs": "image_urls"}},
     }},
     "nano-banana-2": {"kind": "image", "hosts": {
         "kie": {"slug": "nano-banana-2", "cost": 0.08, "aspect": "aspect_ratio",
                 "seed": None, "batch": None},
+        "fal": {"slug": "fal-ai/nano-banana-2", "cost": 0.08, "aspect": "aspect_ratio",
+                "seed": "seed", "batch": "num_images",
+                "edit": {"slug": "fal-ai/nano-banana-2/edit", "refs": "image_urls"}},
     }},
     "gpt-image-2": {"kind": "image", "hosts": {
         # fal prices this by quality x resolution ($0.005 low 1K -> $0.40 high 4K).
@@ -88,6 +92,46 @@ REGISTRY = {
                 "seed": None, "batch": "num_images",
                 "edit": {"slug": "openai/gpt-image-2/edit", "refs": "image_urls"}},
     }},
+    # --- more fal image models, slugs verified against fal's OpenAPI + pricing API 2026-10-18 ---
+    # Costs are ceilings: per-megapixel models are priced at ~1.5 MP.
+    "ideogram-v3": {"kind": "image", "hosts": {
+        # QUALITY speed is ~$0.09; style refs go through image_urls on the same endpoint
+        "fal": {"slug": "fal-ai/ideogram/v3", "cost": 0.09, "aspect": "image_size",
+                "seed": "seed", "batch": "num_images",
+                "edit": {"slug": "fal-ai/ideogram/v3", "refs": "image_urls"},
+                "extra": {"rendering_speed": "QUALITY", "expand_prompt": False}}}},
+    "seedream-4.5": {"kind": "image", "hosts": {
+        "fal": {"slug": "fal-ai/bytedance/seedream/v4.5/text-to-image", "cost": 0.04, "aspect": "image_size",
+                "seed": "seed", "batch": "num_images",
+                "edit": {"slug": "fal-ai/bytedance/seedream/v4.5/edit", "refs": "image_urls"}}}},
+    "seedream-5-pro": {"kind": "image", "hosts": {
+        "fal": {"slug": "bytedance/seedream/v5/pro/text-to-image", "cost": 0.10, "aspect": "image_size",
+                "seed": None, "batch": "num_images",
+                "edit": {"slug": "bytedance/seedream/v5/pro/edit", "refs": "image_urls"}}}},
+    "flux-2-pro": {"kind": "image", "hosts": {
+        "fal": {"slug": "fal-ai/flux-2-pro", "cost": 0.06, "aspect": "image_size",
+                "seed": "seed", "batch": None,
+                "edit": {"slug": "fal-ai/flux-2-pro/edit", "refs": "image_urls"}}}},
+    "flux-3": {"kind": "image", "hosts": {
+        "fal": {"slug": "blackforestlabs/flux-3/text-to-image", "cost": 0.07, "aspect": "aspect_ratio",
+                "seed": None, "batch": None,
+                "edit": {"slug": "blackforestlabs/flux-3/edit-image", "refs": "image_urls"}}}},
+    "flux-kontext-multi": {"kind": "image", "hosts": {
+        # edit-only endpoint: refs are required, so it is used with --ref
+        "fal": {"slug": "fal-ai/flux-pro/kontext/multi", "cost": 0.04, "aspect": "aspect_ratio",
+                "seed": "seed", "batch": "num_images", "needs_ref": True,
+                "edit": {"slug": "fal-ai/flux-pro/kontext/multi", "refs": "image_urls"}}}},
+    "recraft-v3": {"kind": "image", "hosts": {
+        "fal": {"slug": "fal-ai/recraft/v3/text-to-image", "cost": 0.04, "aspect": "image_size",
+                "seed": None, "batch": None,
+                "extra": {"style": "digital_illustration"}}}},
+    "qwen-image": {"kind": "image", "hosts": {
+        "fal": {"slug": "fal-ai/qwen-image", "cost": 0.03, "aspect": "image_size",
+                "seed": "seed", "batch": "num_images"}}},
+    "hidream": {"kind": "image", "hosts": {
+        "fal": {"slug": "fal-ai/hidream-i1-full", "cost": 0.06, "aspect": "image_size",
+                "seed": "seed", "batch": "num_images"}}},
+    # imagen 4: fal-ai/imagen4/preview* returned 404 on the OpenAPI check, so not added.
     "z-image": {"kind": "image", "hosts": {
         "kie": {"slug": "z-image", "cost": 0.01, "aspect": "aspect_ratio",
                 "seed": None, "batch": None},
@@ -115,7 +159,33 @@ ENV_KEY = {"kie": "KIE_API_KEY", "fal": "FAL_KEY", "wavespeed": "WAVESPEED_API_K
 IMG_EXT = (".png", ".jpg", ".jpeg", ".webp", ".gif")
 VID_EXT = (".mp4", ".webm", ".mov", ".m4v")
 
-# aspect ratio -> fal's named image_size enum (openai/* models on fal)
+_KEYS = {}
+
+
+def env_key(name):
+    """Return an API key: the environment first, then the macOS Keychain.
+
+    Keys are stored once with
+      security add-generic-password -a "$USER" -s <NAME> -U -w
+    so unattended runs work in a shell that exports nothing. Looked up once per
+    name per run. The value goes only into the Authorization header: never
+    print it, log it or put it in an error message."""
+    if name not in _KEYS:
+        val = (os.environ.get(name) or "").strip()
+        if not val:
+            try:
+                r = subprocess.run(["/usr/bin/security", "find-generic-password", "-s", name, "-w"],
+                                   stdin=subprocess.DEVNULL, capture_output=True,
+                                   text=True, timeout=10)
+                if r.returncode == 0:
+                    val = r.stdout.strip()
+            except (OSError, subprocess.SubprocessError):
+                pass  # no Keychain here, or it is locked: same as no key
+        _KEYS[name] = val or None
+    return _KEYS[name]
+
+
+# aspect ratio -> fal's named image_size enum (rows with aspect "image_size")
 IMAGE_SIZE_MAP = {"1:1": "square_hd", "4:3": "landscape_4_3", "3:4": "portrait_4_3",
                   "16:9": "landscape_16_9", "9:16": "portrait_16_9", "auto": "auto"}
 # aspect ratio -> wavespeed's "W*H" string, ~1MP
@@ -243,6 +313,9 @@ def build_input(provider, host, kind, prompt, aspect, refs, seed, n, warn=True):
                                          f"URLs; '{r}' is a local file. Upload it first "
                                          f"or use --provider fal.")
         inp[edit["refs"]] = prepared
+    elif host.get("needs_ref"):
+        raise ApiError(provider, f"model '{slug}' on {provider} is edit-only: pass at "
+                                 f"least one --ref image, or pick another model.")
 
     mode = host.get("aspect")
     if aspect:
@@ -378,7 +451,7 @@ def resolve(provider, model, require_key=True):
         hosts = entry["hosts"]
         candidates = [provider] if provider != "auto" else PROVIDER_ORDER
         for p in candidates:
-            if p in hosts and os.environ.get(ENV_KEY[p]):
+            if p in hosts and env_key(ENV_KEY[p]):
                 return p, hosts[p], kind
         avail = [p for p in candidates if p in hosts]
         if not require_key and avail:
@@ -386,15 +459,16 @@ def resolve(provider, model, require_key=True):
         allhosts = [p for p in PROVIDER_ORDER if p in hosts]
         if provider != "auto" and provider not in hosts:
             raise SystemExit(f"'{model}' is not hosted on {provider}. Hosted on: {allhosts}.")
-        raise SystemExit(f"No API key set for a provider hosting '{model}'. "
+        raise SystemExit(f"No API key found for a provider hosting '{model}'. "
                          f"Hosted on: {allhosts}. Set one of "
-                         f"{[ENV_KEY[p] for p in allhosts]}.")
+                         f"{[ENV_KEY[p] for p in allhosts]} in the environment "
+                         f"or the Keychain.")
     if provider == "auto":
         raise SystemExit(f"'{model}' is not a known logical model. Pass --provider "
                          f"explicitly with a native slug, or use one of: "
                          f"{', '.join(REGISTRY)}")
-    if require_key and not os.environ.get(ENV_KEY[provider]):
-        raise SystemExit(f"{ENV_KEY[provider]} not set.")
+    if require_key and not env_key(ENV_KEY[provider]):
+        raise SystemExit(f"{ENV_KEY[provider]} not found in the environment or the Keychain.")
     # Raw slug: we don't know this model's field names, so send the most common
     # spelling and a conservative cost. Expect a 4xx if the model differs.
     eprint(f"note: '{model}' is not in the registry - assuming aspect_ratio/seed/"
@@ -488,7 +562,9 @@ def main():
         print(f"\n[dry-run] would generate {args.n} x {preview_slug} for ~${est:.3f}. No API calls made.")
         return
 
-    key = os.environ[ENV_KEY[provider]]
+    key = env_key(ENV_KEY[provider])
+    if not key:
+        raise SystemExit(f"{ENV_KEY[provider]} not found in the environment or the Keychain.")
     driver = DRIVERS[provider]
     ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     made = []

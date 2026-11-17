@@ -38,9 +38,11 @@ Flags: `--model` `--prompt` (required); `--provider auto|kie|fal|wavespeed`;
 `--aspect`, `--seed` and `--ref` are translated per model, and `--ref` switches
 to the model's edit variant. Don't hand-build bodies to work around that.
 
-Needs one key in the env: `KIE_API_KEY` (cheapest), `FAL_KEY` (most reliable,
-only one taking local ref files), `WAVESPEED_API_KEY` (niche). None set: stop and
-ask. Never write a key into a repo file.
+Needs one key: `KIE_API_KEY` (cheapest), `FAL_KEY` (most reliable, only one
+taking local ref files), `WAVESPEED_API_KEY` (niche). The script reads the
+environment first, then the macOS Keychain (generic password, service = the
+variable name), which is where the keys live on this Mac. None found: stop and
+ask. Never print a key or write one into a repo file.
 
 ## Reference
 
