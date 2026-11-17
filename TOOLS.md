@@ -84,7 +84,7 @@ ComfyUI (26 comfyui) and `scripts/qwen_edit.py` in 29, which drives it, are for 
 | Google Drive from the command line | `rclone` (remotes `gdrive` and `park-drive`) |
 | Park mail, Drive and records | `bin/mail`, `bin/drive`, `bin/park` inside 36 only; sending mail is the owner's call |
 
-`himalaya` is the command-line mail client, and its one account is the park one: always run it as `bin/mail` in 36, because plain `himalaya` has no config file and answers that none was found. `moff` (Microsoft 365, 23 moff) is not installed.
+`himalaya` is the command-line mail client, and its one account is the park one: always run it as `bin/mail` in 36, because plain `himalaya` has no config file. `moff` (Microsoft 365, 23 moff) is not installed.
 
 ## Language models and other agents
 
