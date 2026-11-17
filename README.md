@@ -104,8 +104,6 @@ harness, and its own liveness heartbeat — `cd ~/pebbl && bash ops/check-memory
 | `anti-ai-prose` | Makes writing sound like me instead of like AI. `RULES.md` is the canonical list; `anti_ai_checker.py` validates |
 | `design-spike` | Fans out several distinct UI directions as openable HTML mockups on real data, critiques them adversarially (scored, attacked, not praised), then recommends a base plus grafts |
 | `flare-strategy` | Consultant on FLARE forward-looking active-retrieval strategy for an agent, and generates the prompt scaffold |
-| `loom-refine` | Self-paced loop that refines the loom factory itself |
-| `loom-work` | Works the loom queue as an interactive line worker |
 | `research-planner` | Six-phase research protocol — find the hinge, red-team the plan, tier the subagents, grade the evidence |
 | `skill-builder` | Builds a new skill, or audits and shrinks an existing one |
 
@@ -122,9 +120,9 @@ them here would fork them by accident.
 
 ## Related, deliberately elsewhere
 
-- **Loom UI** — `~/loom/floor/loom-tui`. Stays in loom, versioned alongside
-  the factory it drives. Pulling it here would either cut its history out of
-  loom or leave two copies.
+- **Loom 3** — `~/factory/agentbox`: the `/ship`, `/state`, `/longrun` and
+  `/checkup` skills, the guard and the global CLAUDE.md. "Loom" means Loom 3;
+  the old loom at `~/loom` and its `loom-work`/`loom-refine` skills are retired.
 - **claude-theme** — its own repo in `10.Code-Projects`. Generates terminal
   themes; fold it in here if it ever needs to be.
 - **pebbl** — `~/pebbl`, pushed to
