@@ -8,7 +8,7 @@ there is never a live copy quietly drifting from a repo copy.
 
 | Folder | What it is |
 |---|---|
-| `skills/` | The nine Claude Code skills I authored. |
+| `skills/` | The seven Claude Code skills I authored. |
 | `statusline/` | The Claude Code status line I use, with its full history. |
 | `bin/` | Health checks for this repo's symlinks, the Johnny Decimal name checker, and the Obsidian tag checker. |
 
@@ -81,7 +81,7 @@ tracked paths, so a tracked `events.jsonl` can no longer be pushed back onto the
 ## Not failing silently
 
 `bin/check-dev-tools-health.sh` verifies and repairs what this repo still owns:
-the nine skill symlinks, the statusline symlink, and the TCC constraint on where
+the seven skill symlinks, the statusline symlink, and the TCC constraint on where
 the repo may live. pebbl's own pipeline has its own check, its own fault-injection
 harness, and its own liveness heartbeat — `cd ~/pebbl && bash ops/check-memory-health.sh`.
 
