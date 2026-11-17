@@ -34,7 +34,7 @@ on wavespeed. Reference images are `image_urls`, `image_input`, `input_urls`,
 build_input() does the translation. Adding a model = adding a row, never editing
 the request code.
 """
-import argparse, json, os, re, sys, time, urllib.request, urllib.error, base64, mimetypes
+import argparse, json, os, re, subprocess, sys, time, urllib.request, urllib.error, base64, mimetypes
 from datetime import datetime, timezone
 
 # ---------------------------------------------------------------------------
@@ -50,6 +50,7 @@ from datetime import datetime, timezone
 #   extra  fixed params always sent
 #   edit   variant used when --ref is passed: {"slug":..., "refs": <field name>}
 #          absent = this host can't take reference images for this model
+#   needs_ref  True on an edit-only endpoint: refuse to run without --ref
 #
 # Slugs + fields verified against live provider docs/OpenAPI on 2026-08-02.
 # Costs drift constantly and several models price by resolution - treat them as
@@ -118,7 +119,7 @@ REGISTRY = {
     "flux-kontext-multi": {"kind": "image", "hosts": {
         # edit-only endpoint: refs are required, so it is used with --ref
         "fal": {"slug": "fal-ai/flux-pro/kontext/multi", "cost": 0.04, "aspect": "aspect_ratio",
-                "seed": "seed", "batch": "num_images",
+                "seed": "seed", "batch": "num_images", "needs_ref": True,
                 "edit": {"slug": "fal-ai/flux-pro/kontext/multi", "refs": "image_urls"}}}},
     "recraft-v3": {"kind": "image", "hosts": {
         "fal": {"slug": "fal-ai/recraft/v3/text-to-image", "cost": 0.04, "aspect": "image_size",
@@ -156,6 +157,9 @@ PROVIDER_ORDER = ["kie", "fal", "wavespeed"]
 
 ENV_KEY = {"kie": "KIE_API_KEY", "fal": "FAL_KEY", "wavespeed": "WAVESPEED_API_KEY"}
 IMG_EXT = (".png", ".jpg", ".jpeg", ".webp", ".gif")
+VID_EXT = (".mp4", ".webm", ".mov", ".m4v")
+
+_KEYS = {}
 
 
 def env_key(name):
@@ -163,22 +167,25 @@ def env_key(name):
 
     Keys are stored once with
       security add-generic-password -a "$USER" -s <NAME> -U -w
-    so unattended runs work in a shell that exports nothing."""
-    val = os.environ.get(name)
-    if val:
-        return val
-    try:
-        import subprocess
-        r = subprocess.run(["security", "find-generic-password", "-s", name, "-w"],
-                           capture_output=True, text=True, timeout=10)
-        if r.returncode == 0 and r.stdout.strip():
-            return r.stdout.strip()
-    except Exception:
-        pass
-    return None
-VID_EXT = (".mp4", ".webm", ".mov", ".m4v")
+    so unattended runs work in a shell that exports nothing. Looked up once per
+    name per run. The value goes only into the Authorization header: never
+    print it, log it or put it in an error message."""
+    if name not in _KEYS:
+        val = (os.environ.get(name) or "").strip()
+        if not val:
+            try:
+                r = subprocess.run(["/usr/bin/security", "find-generic-password", "-s", name, "-w"],
+                                   stdin=subprocess.DEVNULL, capture_output=True,
+                                   text=True, timeout=10)
+                if r.returncode == 0:
+                    val = r.stdout.strip()
+            except (OSError, subprocess.SubprocessError):
+                pass  # no Keychain here, or it is locked: same as no key
+        _KEYS[name] = val or None
+    return _KEYS[name]
 
-# aspect ratio -> fal's named image_size enum (openai/* models on fal)
+
+# aspect ratio -> fal's named image_size enum (rows with aspect "image_size")
 IMAGE_SIZE_MAP = {"1:1": "square_hd", "4:3": "landscape_4_3", "3:4": "portrait_4_3",
                   "16:9": "landscape_16_9", "9:16": "portrait_16_9", "auto": "auto"}
 # aspect ratio -> wavespeed's "W*H" string, ~1MP
@@ -306,6 +313,9 @@ def build_input(provider, host, kind, prompt, aspect, refs, seed, n, warn=True):
                                          f"URLs; '{r}' is a local file. Upload it first "
                                          f"or use --provider fal.")
         inp[edit["refs"]] = prepared
+    elif host.get("needs_ref"):
+        raise ApiError(provider, f"model '{slug}' on {provider} is edit-only: pass at "
+                                 f"least one --ref image, or pick another model.")
 
     mode = host.get("aspect")
     if aspect:
@@ -449,15 +459,16 @@ def resolve(provider, model, require_key=True):
         allhosts = [p for p in PROVIDER_ORDER if p in hosts]
         if provider != "auto" and provider not in hosts:
             raise SystemExit(f"'{model}' is not hosted on {provider}. Hosted on: {allhosts}.")
-        raise SystemExit(f"No API key set for a provider hosting '{model}'. "
+        raise SystemExit(f"No API key found for a provider hosting '{model}'. "
                          f"Hosted on: {allhosts}. Set one of "
-                         f"{[ENV_KEY[p] for p in allhosts]}.")
+                         f"{[ENV_KEY[p] for p in allhosts]} in the environment "
+                         f"or the Keychain.")
     if provider == "auto":
         raise SystemExit(f"'{model}' is not a known logical model. Pass --provider "
                          f"explicitly with a native slug, or use one of: "
                          f"{', '.join(REGISTRY)}")
     if require_key and not env_key(ENV_KEY[provider]):
-        raise SystemExit(f"{ENV_KEY[provider]} not set.")
+        raise SystemExit(f"{ENV_KEY[provider]} not found in the environment or the Keychain.")
     # Raw slug: we don't know this model's field names, so send the most common
     # spelling and a conservative cost. Expect a 4xx if the model differs.
     eprint(f"note: '{model}' is not in the registry - assuming aspect_ratio/seed/"
@@ -552,6 +563,8 @@ def main():
         return
 
     key = env_key(ENV_KEY[provider])
+    if not key:
+        raise SystemExit(f"{ENV_KEY[provider]} not found in the environment or the Keychain.")
     driver = DRIVERS[provider]
     ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     made = []
