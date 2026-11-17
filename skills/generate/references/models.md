@@ -18,13 +18,16 @@ editing request code:
 ```
 
 - `kind` - `image` | `video`
-- `aspect` - `"aspect_ratio"` | `"image_size"` (fal's `openai/*` named enum) |
+- `aspect` - `"aspect_ratio"` | `"image_size"` (fal's named enum: `square_hd`,
+  `landscape_16_9`...; `--aspect` is mapped through `IMAGE_SIZE_MAP`) |
   `"size_wh"` (wavespeed `"1280*720"`) | `None`
 - `seed` - field name, or `None` if the model rejects seeds
 - `batch` - "N at once" field name (fal: `num_images`), or `None` to loop
 - `edit` - the variant used for `--ref`; omit if the model takes no image input.
   The refs field varies: `image_urls`, `image_input`, `input_urls`,
   `reference_image_urls`
+- `needs_ref` - `True` on an edit-only endpoint (`flux-kontext-multi`): the
+  script refuses to run it without `--ref`
 - `extra` - optional fixed params
 
 Get field names from the provider's "Copy for LLMs" button, or for fal:
@@ -45,4 +48,5 @@ They scale with resolution and duration, so a flat number under-counts:
 
 They get renamed and retired (kie's `bytedance/seedance-1.5-pro` vanished). A
 stale row looks fine and fails only at spend time. Slugs and field names in the
-current registry were verified 2026-08-02.
+current registry were verified 2026-08-02; the fal image rows added after that
+(`ideogram-v3` to `hidream`) on 2026-10-18.
