@@ -147,11 +147,11 @@ All in 33 lumr, run from its folder (commands in the catalog). The YouTube login
 
 | Need | Tool |
 |---|---|
-| Title, description, chapters and tags for a video | `clipforge publish prepare`, then `clipforge publish check`; the lumr-studio `publish-kit` extra drafts the same kit and is off by default |
+| Title, description, chapters and tags for a video | `clipforge publish prepare` writes the edited transcript into a kit folder; write the four from it, then `clipforge publish check` validates them. The lumr-studio `publish_kit` extra saves the same kit and is off by default |
 | A thumbnail: pick frames from the video, add the text | `clipforge publish frames`, then `clipforge publish compose` |
 | Put the kit on a video | `clipforge publish push` (login; dry run unless told to apply) |
-| Upload privately with a later public date | `python -m clipforge.youtube_upload` (login) |
-| Titles that follow the channel's own patterns | `python -m clipforge.creator_profile --learn` (login) |
+| Upload privately with a later public date | `clipforge.youtube_upload` (login) |
+| Titles that follow the channel's own patterns | `clipforge.creator_profile --learn` (login) |
 | How videos performed | `dataforge`: load a YouTube Studio export with `load_analytics_csv`, then `get_top_videos` and `record_retention_audit`. No data is loaded on this Mac, and nothing here calls YouTube for analytics |
 | Script and shorts structure | `youtube-narrative-guide/` and `shortform-narrative-guide/` |
 

@@ -11,7 +11,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | Skill | Source | Does |
 |---|---|---|
 | `activity-check` | `~/dev-tools/skills` | Diagnose a hot, slow or draining Mac |
-| `anti-ai-prose` | `~/dev-tools/skills` | Draft or edit prose in Ashley's voice. `python3 ~/.claude/skills/anti-ai-prose/anti_ai_checker.py <file>` gives a pass, warn or rewrite verdict with the flagged lines |
+| `anti-ai-prose` | `~/dev-tools/skills` | Draft or edit prose in Ashley's voice. `python3 ~/.claude/skills/anti-ai-prose/anti_ai_checker.py <file>` gives a pass, warn or rewrite verdict with the flagged patterns |
 | `design-spike` | `~/dev-tools/skills` | Several design directions as HTML mockups, critiqued |
 | `flare-strategy` | `~/dev-tools/skills` | Advice on forward-looking retrieval for an agent |
 | `generate` | `~/dev-tools/skills` | Paid image and video generation with a budget cap: `python3 ~/.claude/skills/generate/scripts/generate.py --model M --prompt "..." [--ref IMAGE --n N --aspect 1:1 --budget B --max-cost C --out DIR --dry-run]`. Images: nano-banana, nano-banana-pro, nano-banana-2, gpt-image-2, ideogram-v3, seedream-4.5, seedream-5-pro, flux-2-pro, flux-3, flux-kontext-multi (needs `--ref`), recraft-v3, qwen-image, hidream, z-image. Video: kling, seedance. Keys come from the environment, then the Keychain. No upscale or relight job |
@@ -61,16 +61,16 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 
 ## mflux commands
 
-All 44, version 0.23.0. Output is `image.png` in the current folder unless `--output` is given. Shared flags: `--prompt`, `--seed`, `--steps`, `--width`, `--height`, `-q 4|8` (less memory), `--lora-paths`, `--low-ram`. "Here" means the weights are already downloaded; every other command downloads tens of GB on first use, so ask first.
+All 44, version 0.23.0. Output is `image.png` in the current folder unless `--output` is given. Common flags: `--prompt`, `--seed`, `--steps`, `--width`, `--height`, `-q 3|4|5|6|8` (less memory), `--lora-paths`, `--low-ram`. "Here" means the weights are already downloaded; every other command downloads tens of GB on first use, so ask first.
 
 | Job | Commands | Weights |
 |---|---|---|
 | New image from text | `mflux-generate-flux2` (Flux 2 klein), `mflux-generate-flux3` (Flux 3 klein), `mflux-generate-ernie-image-turbo`, `mflux-generate-qwen-2.1 -m qwen-image-2.1-turbo` | Here |
 | | `mflux-generate` (Flux 1), `mflux-generate-qwen`, `mflux-generate-ernie-image`, `mflux-generate-z-image`, `mflux-generate-z-image-turbo`, `mflux-generate-krea2`, `mflux-generate-boogu`, `mflux-generate-lens`, `mflux-generate-ming` (transparent design assets), `mflux-generate-ideogram4` (text in images; licence click needed), `mflux-generate-fibo` (structured prompts) | Not here |
 | Edit by instruction | `mflux-generate-flux2-edit --image-paths IN --prompt "..."`, `mflux-generate-flux3-edit` (up to 10 reference images), `mflux-generate-qwen-2.1-edit -m qwen-image-2.1-turbo` | Here |
-| | `mflux-generate-qwen-edit` (its default model is not here; the 2511 weights are, under another name), `mflux-generate-kontext`, `mflux-generate-in-context-edit`, `mflux-generate-fibo-edit` (also removes backgrounds) | Not here |
-| Inpaint by mask | `mflux-generate-fill --image-path IN --masked-image-path MASK`, `mflux-generate-qwen-2.1-controlnet` | Not here |
-| Control by edge or depth | `mflux-generate-controlnet`, `mflux-generate-depth`, `mflux-generate-krea2-controlnet`, `mflux-generate-z-image-controlnet` | Not here |
+| | `mflux-generate-qwen-edit` (its default model is not here; the 2511 weights are, as `mflux-community/qwen-image-edit-2511-mflux-q8`), `mflux-generate-kontext`, `mflux-generate-in-context-edit`, `mflux-generate-fibo-edit` (also removes backgrounds) | Not here |
+| Inpaint by mask | `mflux-generate-fill --image-path IN --masked-image-path MASK` | Not here |
+| Control by edge or depth | `mflux-generate-controlnet`, `mflux-generate-depth`, `mflux-generate-krea2-controlnet`, `mflux-generate-z-image-controlnet`, `mflux-generate-qwen-2.1-controlnet` (a control image, an inpaint mask, or both) | Not here |
 | Depth map of an image | `mflux-save-depth --image-path IN` | Not here |
 | Variations and references | `mflux-generate-redux`, `mflux-generate-in-context` | Not here |
 | Virtual try-on | `mflux-generate-in-context-catvton --person-image --person-mask --garment-image` | Not here |
@@ -78,7 +78,7 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | Concept heatmap | `mflux-concept`, `mflux-concept-from-image` | Not here |
 | Prompt from an image, refine a prompt | `mflux-inspire-fibo`, `mflux-refine-fibo` | Not here |
 | Train a style | `mflux-train --config FILE [--dry-run]`; `mflux-lora-library list` | No model needed to list |
-| Housekeeping | `mflux-save` (save a smaller copy of a model), `mflux-info IMAGE` (how an image was made), `mflux-capabilities`, `mflux-completions` | No model needed |
+| Housekeeping | `mflux-save` (save a smaller copy of a model), `mflux-info IMAGE` (how an image was made), `mflux-capabilities`, `mflux-completions` | `mflux-save` needs the model's weights; the others need no model |
 
 
 ## Loom 3 (source: `~/factory/agentbox`)
@@ -191,8 +191,8 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | | `dataforge` | Python import (`sources/youtube.py`, `sources/youtube_transcript.py`) | YouTube analytics and comments; transcripts without a key |
 | | `security-check.sh` | `bash security-check.sh` | Read-only audit of agent settings and editor startup files after a package scare |
 | | lumr-studio extras | set `LUMR_STUDIO_EXTRAS=publish_kit,overlays` | Adds overlays and a publish kit to the plugin; off by default |
-| | `clipforge publish frames`, `compose` | `clipforge publish frames <video> [--count N]`; `clipforge publish compose --frame N --text "LINE\|LINE"` (same `uv run` prefix) | Pick sharp, varied frames into a gallery; draw a 1280x720 thumbnail with text. `compose` needs `--font` or a thumbnail spec, which is not on this Mac |
-| | `clipforge.thumbnail` | `python -m clipforge.thumbnail --build-gallery DIR` | A picker page of frames; a thumbnail with your own font |
+| | `clipforge publish frames`, `compose` | `clipforge publish frames <video> [--count N]`; `clipforge publish compose --video <video> --frame N --text "LINE\|LINE"` (same `uv run` prefix) | Pick sharp, varied frames into a gallery; draw a 1280x720 thumbnail with text. `compose` needs a font set in `~/.config/lumr/thumbnail_spec.json`, which is not on this Mac |
+| | `clipforge.thumbnail` | `python -m clipforge.thumbnail --build-gallery DIR` (this and the two rows below: after `uv run --project "P/33 lumr/clipforge"`) | A picker page of frames; a thumbnail drawn with a font you pass (`--font`) |
 | | `clipforge.youtube_upload`, `youtube_flip` | `python -m clipforge.youtube_upload FILE --title T`; `python -m clipforge.youtube_flip [--dry-run]` | Upload as private with a public date a week later; flip due videos to public. Need the YouTube login |
 | | `clipforge.creator_profile` | `python -m clipforge.creator_profile --learn [--dry-run]` | Learn the channel's title patterns into a profile. Needs the YouTube login |
 | | clipforge modes | `clipforge <source> --mode shorts\|edit\|both\|narrative\|editor` | Shorts, a tightened edit, a narrative cut, or the editor page. Calls `hammy` for the transcript and a local model by default |
