@@ -45,7 +45,7 @@ ComfyUI (project 26) is a node editor the owner drives by hand: use it only when
 | Need | Tool | Cost |
 |---|---|---|
 | A PDF that already holds real text | `pdftotext` (poppler) | Instant |
-| Scans, phone photos, long documents where layout matters | Unlimited OCR 2 (run line in `35 local-models/MODELS.md`) | Minutes; fails if Ollama has a model loaded |
+| Scans, phone photos, long documents where layout matters | Unlimited OCR 2 (run line in `35 local-models/MODELS.md`) | Minutes; can crash with a GPU timeout while Ollama is running a model |
 | One screenshot or photo | Read the image yourself | Nothing |
 | Text or mana cost on a Magic card | image-edit MCP `read_text`, `read_mana` | Free; minutes |
 
@@ -59,7 +59,6 @@ Read `~/Documents/Code/10-19 Projects/35 local-models/MODELS.md` before picking 
 |---|---|
 | Draft or edit prose so it sounds like Ashley | `anti-ai-prose` skill |
 | A pass, warn or rewrite verdict on a finished passage | `anti-ai-writing` plugin skill |
-| Stress-test a plan by interview | `grilling` skill (`grill-me` is an older copy of the same job) |
 
 ## Design
 
@@ -74,7 +73,6 @@ Read `~/Documents/Code/10-19 Projects/35 local-models/MODELS.md` before picking 
 | Need | Tool |
 |---|---|
 | Google mail, calendar, Drive | The Gmail, Calendar and Drive connectors |
-| Microsoft 365 | `moff` (project 23); `moff schema` lists what works today |
 | Park mail, Drive and records | `bin/park`, `bin/mail`, `bin/drive` inside project 36 only |
 
 ## Where tools live
@@ -88,9 +86,9 @@ Project numbers are folders under `~/Documents/Code/10-19 Projects/`.
 | 11 MTG-Deck-Builder | mtg-cards MCP; skills `commander-deck`, `print-deck` |
 | 13 proxy-magic | image-edit MCP (`products/tools/localgen`) |
 | 21 lore-builder | skills `lore-setup`, `lore-build`, `lore-check`, `lore-pass` |
-| 23 moff | `moff`, Microsoft 365 from the command line |
+| 23 moff | Source of `moff`, a Microsoft 365 command-line tool; not installed on this Mac |
 | 33 lumr | lumr-studio plugin; `bookforge`, `hammy`, `clipforge`; `anti-ai-writing` |
-| 34 pebbl | `pebbl`, project memory |
+| 34 pebbl | Source of `pebbl`, project memory; the `pebbl` on PATH runs the `~/factory/pebbl` clone |
 | 35 local-models | `MODELS.md`, Unlimited OCR 2, Code2Video |
 | 36 Mobile-Home-Parks | `bin/park`, `bin/mail`, `bin/drive` |
 | 44 learn-later | `learn`; skills `learn-later`, `socratic-tutor` |
