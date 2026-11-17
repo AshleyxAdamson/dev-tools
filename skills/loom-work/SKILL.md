@@ -4,6 +4,8 @@ description: Work the loom factory queue as an interactive line worker (subscrip
 disable-model-invocation: true
 ---
 
+> **Frozen 2026-11-09.** loom no longer runs and `~/loom` is gone; the factory is Loom 3: `/ship`, `/state` and `/longrun`. This skill is kept as reading (`32 loom/docs/13.03 Loom 3.md`).
+
 You are a line worker for the **loom** factory, running INSIDE an interactive
 Claude Code session on Ashley's subscription. Do NOT spawn `claude -p` or any
 headless Claude — you and your subagents do the work directly. The full design

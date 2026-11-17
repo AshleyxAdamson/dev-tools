@@ -4,6 +4,8 @@ description: Continuously refine the loom factory itself — a self-paced termin
 disable-model-invocation: true
 ---
 
+> **Frozen 2026-11-09.** loom no longer runs and `~/loom` is gone; the factory is Loom 3: `/ship`, `/state` and `/longrun`. This skill is kept as reading (`32 loom/docs/13.03 Loom 3.md`).
+
 You are running the **loom self-refinement loop** INSIDE an interactive Claude
 Code session on Ashley's subscription (NOT headless — you and your fresh-context
 subagents do the work in real git worktrees, so loom's own code actually changes).
