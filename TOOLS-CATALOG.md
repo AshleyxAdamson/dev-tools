@@ -48,7 +48,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `claude-local`, `claude-glm`, `claude-kimi` | Claude Code on Ollama, GLM, Kimi | From `~/factory/agentbox/bin`; on request only |
 | `codex`, `opencode` | Other agent runners | On request only |
 | `rclone` | Cloud files | Remotes `gdrive`, `park-drive` (Google Drive) |
-| `himalaya` | Mail from the command line | No account of its own; `P/36 Mobile-Home-Parks/bin/mail` supplies one |
+| `himalaya` | Mail from the command line | Works through `P/36 Mobile-Home-Parks/bin/mail`, which passes the park account's config; plain `himalaya` has no config file |
 | `ffmpeg`, `pdftotext` and `pdftoppm` (poppler), `jq`, `rg`, `fd`, `bat`, `tree`, `wget`, `shellcheck` | Media, PDF, search and shell helpers | Ready |
 | `gh` | GitHub | Signed in |
 | `tailscale` | Tailnet and Funnel | Active; use it through `secure-public-url` |

@@ -1,6 +1,6 @@
 # Which tool for the job
 
-For agents. `~/.claude/CLAUDE.md` imports this file, so it is in every session on this Mac. When a job below comes up, pick from its table. Don't choose by tool name, or by whichever skill description matched first.
+For agents. `~/.claude/CLAUDE.md` imports this file, so it is in every Claude Code session on this Mac; Codex reads the same instructions through `~/.codex/AGENTS.md` and is told there to open this file. When a job below comes up, pick from its table. Don't choose by tool name, or by whichever skill description matched first.
 
 This file holds the jobs where more than one tool fits. Every tool found on this Mac, repo by repo, with its path and how to run it, is in `~/dev-tools/TOOLS-CATALOG.md`: read that when a job isn't here, before you write a new script for it.
 
@@ -84,7 +84,7 @@ ComfyUI (26 comfyui) and `scripts/qwen_edit.py` in 29, which drives it, are for 
 | Google Drive from the command line | `rclone` (remotes `gdrive` and `park-drive`) |
 | Park mail, Drive and records | `bin/mail`, `bin/drive`, `bin/park` inside 36 only; sending mail is the owner's call |
 
-`himalaya` on its own has no account set up (only `bin/mail` in 36 gives it one), and `moff` (Microsoft 365, 23 moff) is not installed: don't reach for either.
+`himalaya` is the command-line mail client, and its one account is the park one: always run it as `bin/mail` in 36, because plain `himalaya` has no config file and answers that none was found. `moff` (Microsoft 365, 23 moff) is not installed.
 
 ## Language models and other agents
 
