@@ -53,8 +53,8 @@ Heavy local image jobs share one GPU. The image-edit MCP queues by itself; call 
 | Need | Tool | Cost |
 |---|---|---|
 | A new image, free and private | image-edit MCP `generate_image` (local Qwen) | Free; minutes |
-| A new image from a hosted model (nano-banana, gpt-image, Seedream, Flux, Ideogram, Recraft) | `generate` skill | Paid per call, under its budget cap |
-| Change one boxed area and keep every other pixel | image-edit MCP `edit_region`, then `judge_edit` for a verdict | Free; minutes; it garbles lettering |
+| A new image from a hosted model (nano-banana, gpt-image, z-image) | `generate` skill | Paid per call, under its budget cap |
+| Change one boxed area and keep every other pixel | image-edit MCP `edit_region`, then `judge_edit` for a verdict | Free; minutes |
 | Change a whole image by instruction, **lighting and colour included** | Local: `mflux-generate-qwen-edit`, `mflux-generate-flux2-edit`, `mflux-generate-flux3-edit`. Hosted: `generate --ref <image>` | Local is free; there is no dedicated relight tool for ordinary images |
 | Relight a painted Magic card, or change one thing on it | `prompt_writer.py --edit-from <card> --relight` in 13 (guide: `products/painting/20.03 Relight a paint.md`) | About $0.15 a card |
 | **Upscale** | `upscayl-bin` inside Upscayl.app (seven 4x models) | Free and fast; `mflux-upscale-seedvr2` only when asked |
@@ -64,7 +64,7 @@ Heavy local image jobs share one GPU. The image-edit MCP queues by itself; call 
 | Tag a folder of images, or search images and text by meaning | `tag_images.py` and `search.py` in 13 (`products/themes/rick-and-morty/tools/`) | Tagging defaults to a paid model; search is local |
 | Magic proxy card art, sketch to print | `pipeline` (29 proxy-pipeline, run from its folder) | Stops for the owner's pick; paid and GPU steps are opt-in |
 
-The `mflux` models already downloaded are Qwen-Image 2.1 Turbo, Flux 2 klein, Flux 3 klein, ERNIE-Image Turbo and Qwen-Image-Edit 2511: use an `mflux` text-to-image command only when the owner names the model. ComfyUI (26 comfyui) holds the same two Qwen models and is started by hand; `scripts/qwen_edit.py` in 29 drives it.
+The `mflux` models already downloaded are Qwen-Image 2.1 Turbo, Flux 2 klein, Flux 3 klein, ERNIE-Image Turbo and Qwen-Image-Edit 2511: use an `mflux` text-to-image command only when the owner names the model. ComfyUI (26 comfyui) holds Qwen-Image 2512 and Qwen-Image-Edit 2511 and is started by hand; `scripts/qwen_edit.py` in 29 drives it.
 
 ## Text off a page or a picture
 
@@ -103,15 +103,12 @@ Read `~/Documents/Code/10-19 Projects/35 local-models/MODELS.md` before picking 
 
 ## Loom 3: landing work, long runs and the guard
 
-Loom 3 is the owner's pipeline; its source is `~/factory/agentbox` (`LOOM3.md`).
+Loom 3 is the owner's pipeline; its source is `~/factory/agentbox` (`LOOM3.md`). The catalog lists every piece, `/state`, `/longrun` and `/checkup` included.
 
 | Need | Tool |
 |---|---|
 | Land finished work on main | `/ship`, the only door. The `loom` queue (32) and the `loom-work` and `loom-refine` skills are frozen; firstmate's merge flow is not used for the owner's repos |
-| What is really on disk across every project, and tidying leftovers | `/state` |
-| One goal worked for hours or days | `/longrun <goal>`, only when the owner types it |
-| The pipeline got in the way | One line appended to `~/factory/logs/friction.log` (the command is in the global instructions), then carry on. `/checkup` reads that log weekly and repairs |
-| A command was blocked | That is the guard hook on every shell command and file write. It stops pushes and PRs the owner didn't ask for, destructive git and delete commands, admin commands and reads of key files. Don't route around it: write the friction line |
+| A command was blocked | That is the guard hook on every shell command and file write. It stops pushes and PRs the owner didn't ask for, destructive git and delete commands, admin commands and reads of key files. Don't route around it: write the friction line from the global instructions and carry on |
 | A change inside `~/factory/agentbox` | `make test` there before `/ship` |
 | A public link to something running locally | `secure-public-url` skill; `scripts/studio-public-url.sh` in 41 is for DropList only |
 | A fal, Gemini or OpenAI key for a command | `products/tools/with-keys <command>` in 13 proxy-magic reads it from the Keychain; `set-key <NAME>` stores one. Never paste a key into a file |
@@ -147,7 +144,6 @@ There is no general store where a note or a document goes in and is found later.
 |---|---|
 | Draft or edit prose so it sounds like Ashley | `anti-ai-prose` skill |
 | A pass, warn or rewrite verdict on a finished passage | `anti-ai-writing` plugin skill |
-| A score for how machine-written a text reads | the detector in 40 essay-check (`eval/detector/score.py`); a ranking, not a verdict |
 | Draw or change a screen | Paper MCP |
 | The owner names Figma or gives a figma.com link | Figma MCP |
 | Several directions compared before a design is settled | `design-spike` skill |

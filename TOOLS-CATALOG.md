@@ -14,7 +14,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `anti-ai-prose` | `~/dev-tools/skills` | Draft or edit prose in Ashley's voice |
 | `design-spike` | `~/dev-tools/skills` | Several design directions as HTML mockups, critiqued |
 | `flare-strategy` | `~/dev-tools/skills` | Advice on forward-looking retrieval for an agent |
-| `generate` | `~/dev-tools/skills` | Paid image and video generation with a budget cap. Images: nano-banana (and pro, 2), gpt-image-2, ideogram-v3, seedream, flux-2-pro, flux-3, flux-kontext-multi, recraft-v3, qwen-image, hidream, z-image. Video: kling, seedance. `--ref` edits from an image. No upscale or relight job |
+| `generate` | `~/dev-tools/skills` | Paid image and video generation with a budget cap. Images: nano-banana (and pro, 2), gpt-image-2, z-image. Video: kling, seedance. `--ref` edits from an image. No upscale or relight job |
 | `research-planner` | `~/dev-tools/skills` | Multi-phase research with checked citations |
 | `skill-builder` | `~/dev-tools/skills` | Build or audit a skill |
 | `video-grab` | `~/dev-tools/skills` | Screens, transcript and file from a YouTube video |
@@ -44,7 +44,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `yt-dlp` | Download video, audio or captions | Ready |
 | `mlx_whisper` | Local speech to text | Ready |
 | `mflux-*` (44) | Local image models. Weights present: `mflux-generate-qwen-2.1`, `-flux2`, `-flux3`, `-ernie-image-turbo` (new image); `-qwen-edit`, `-flux2-edit`, `-flux3-edit` (edit by instruction). Weights absent, large download on first use: `-fill` (inpaint), `-controlnet`, `-depth`, `-redux` (variations), `-kontext`, `-in-context-catvton` (try-on), `-z-image`, `-krea2`, `-ideogram4`, `-fibo`, `mflux-upscale-seedvr2`, `mflux-upscale-controlnet`. Also `mflux-train` (LoRA), `mflux-info <image>`, `mflux-capabilities` | Ready |
-| `sips`, `cwebp`, `dwebp`, `cjpeg` | Convert, resize and compress images | Ready; ImageMagick, pngquant and rembg are not installed |
+| `sips`, `cwebp`, `dwebp`, `cjpeg` | Convert, resize and compress images | Ready; ImageMagick and pngquant are not installed; rembg is only in 29 proxy-pipeline's venv |
 | `ollama`, `llama-server`, `llama-cli` | Local language models | Ollama always running on `127.0.0.1:11434` |
 | `claude-local`, `claude-glm`, `claude-kimi` | Claude Code on Ollama, GLM, Kimi | From `~/factory/agentbox/bin`; on request only |
 | `codex`, `opencode` | Other agent runners | On request only |
@@ -73,7 +73,6 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | tests | `make test` in `~/factory/agentbox` | Guard, ship, install and longrun tests; `tests/codex_live_test.sh` is separate and costs money |
 | Remote Control lobby | `ops/lobby-up.sh`, launchd `com.agentbox.lobby` | Keeps a tmux session ready so phone sessions start in the Projects folder |
 | health, notify | `ops/health.sh`, `ops/notify.sh` | Host checks every 5 minutes; Telegram notices, which are not configured, so messages pile up in `notify-undelivered.log` |
-| `pr`, `retro`, `tdd`, `secure-public-url` | `~/.claude/skills` | PR body when the owner asks for a PR; retrospective; test-first work; public link |
 | frozen | `P/32 loom`; skills `loom-work`, `loom-refine` in `~/dev-tools/skills` | The old queue, stopped 2026-11-09 |
 
 ## Where notes and documents are kept
@@ -86,9 +85,8 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | Park logs and meetings | `bin/park` in `P/36` | `park status`, `park todo` | Works; parks only |
 | Lore bible | `lore-build` skill in `P/21` | `tools/search.py` | Works; one world per copy of the kit |
 | Odysseus | its app: notes, documents, mail, memory | its own search | Not running; its Claude skill is not installed |
-| bookforge transcript store | `bookforge/ingest.py` in `P/33 lumr` | its search | Gone: no database on this Mac |
+| bookforge transcript store | `bookforge/bookforge/ingest.py` in `P/33 lumr` | its search | Gone: no database on this Mac |
 | Obsidian vault | `~/Documents/Obsidian Vault` | Obsidian | Holds one note |
-
 
 ## Home-root repos
 
@@ -116,7 +114,7 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | 12 portfolio | `tools/explorer-reel` | `node record.mjs [id]`, `node composite.mjs` | Record HTML prototypes as video; `lib.mjs` is the shared recorder |
 | | `tools/deck-reel`, `tools/meridian-reel` | `node record.mjs` | Record Paper frames, or the live Meridian prototype, as video |
 | | `tools/explorer-reel/probe.mjs` | `node probe.mjs <page> [width] [--scene]` | Load a page; print its accessibility snapshot and take a screenshot |
-| | `tools/explorer-reel/drift/to-paper.mjs` | `node drift/to-paper.mjs --file <id> --page <id> --name N <page.html#selector>` | Copy a rendered page into Paper as editable layers; Paper must be open |
+| | `tools/explorer-reel/to-paper.mjs` | `node to-paper.mjs --file <id> --page <id> --name N <page.html#selector>` | Copy a rendered page into Paper as editable layers; Paper must be open |
 | 13 proxy-magic | `products/tools/with-keys`, `set-key` | `with-keys <command>`; `set-key <NAME>` | Run a command with API keys from the Keychain; store a key |
 | | `vendor/tcg-mint` (`mint`) | see its README | Render card images from card data through headless Chromium |
 | | theme tools in `products/themes/rick-and-morty/tools/` | from the theme folder, e.g. `python3 -I tools/grab_episodes.py --fetch S1E6` | Episode screen grabs, reference-image search, image tagging, bible search |
@@ -124,20 +122,20 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | | copy of `mtg` | — | Duplicate of 11; use 11 |
 | | `products/tools/localgen/gpu_lock.py` | `python3 gpu_lock.py status`; `python3 gpu_lock.py run --label X --gb N -- <command>` | The machine-wide GPU queue: heavy local jobs run one at a time, in arrival order |
 | | `products/tools/layout.py`, `layout_check.py` | `python3 layout.py plan`; `python3 layout_check.py <card> <layout.json>` | Plan a card's panels and draw the guide image; measure drift |
-| | `proxymagic/printing/upscale.py` | through `mtg print` or the mtg-cards `set_art` tool | Upscale card art with Upscayl to print size with bleed |
+| | `proxymagic/printing/upscale.py` | through `mtg print` or the mtg-cards `print_deck` tool | Upscale card art with Upscayl to print size with bleed |
 | | card painting, in `products/themes/rick-and-morty/` | `tools/card_round.py decks/<deck> "<Name>"` | The entry point for painting one card; `polish.py` adds title, mana and text and upscales; `review_board.py` is the review page |
 | | `tools/prompt_writer.py` (same theme) | `--paint`; `--edit-from <card> --edit-prompt <file>`; `--edit-from <card> --relight`; `--cutout-test <art>` | Paint, edit, relight or cut out card art through fal (paid, about $0.15 a card) |
 | | `tools/breakout_scalpel.py` (same theme) | `clip --segment vision` | Cut a subject out and lay it over the frame; macOS Vision is the free option |
 | | `tools/tag_images.py`, `search.py`, `find_refs.py`, `print_prep.py` (same theme) | run from the theme folder | Tag reference images; search bible and images by meaning (local embeddings); find reference images; print files at 800 dpi with bleed |
 | | `tools/paper_mcp.py` (same theme) | Python import | A plain client for Paper's server, so a script can write to Paper |
 | 15 LSTM_AI_Stock_Predictor | `run_live_signals.py`, `run_backtest_v4.py`, `research/evaluate.py` | `python <file>` | Stock forecaster and its sealed-holdout evaluation |
-| | `run_significance.py`, `research/gate.py`, `score_holdout.py` | `python <file>` | Whether a result beats seed noise; accept or reject with a penalty for the number of tries; a once-only holdout score |
+| | `run_significance.py`, `research/gate.py`, `research/score_holdout.py` | `python <file>` | Whether a result beats seed noise; accept or reject with a penalty for the number of tries; a once-only holdout score |
 | | `TrainingData/featuresPy/insiderbuying.py` | `python insiderbuying.py` | Insider buys from SEC Form 4 filings, no key |
 | | `TrainingData/sp500/download_sp500.py` | `python download_sp500.py` | S&P 500 prices by date including delisted names (Massive key) |
 | 16 congress-trading-investigation | `audio_engine` | `from audio_engine import Cue, render_track` | Synthesised sound effects and track mixing, no samples |
 | | `source_code/lib/data_quiver.py`, `source_code/show_trades.py` | `python source_code/show_trades.py [--all] [--csv f]` | Congress trades from Quiver (paid key) |
 | | `source_code/lib/animation.py` | `animate_lines`, `animate_bars`, `save_animation(..., audio_wav=)` | Animated charts as video with the sound mixed in |
-| | `source_code/lib/backtest.py`, `source_code/prefetch_data.py` | Python import; `python prefetch_data.py` | Follow-the-filing backtest; cache all the trade and price data |
+| | `source_code/lib/backtest.py`, `source_code/prefetch_data.py` | Python import; `python source_code/prefetch_data.py` | Follow-the-filing backtest; cache all the trade and price data |
 | 17 Glassdoor-AI-Stock-Trader | `glassdoor_stock/massive.py`, `prices.py` | Python import | Prices and financials from Massive, with paging and retry |
 | | `download_glassdoor_dataset.py` | `python download_glassdoor_dataset.py` | Kaggle review dataset (Kaggle login) |
 | 18 WallStreetBets-Stock-Bot | `src/fetch_wsb_arctic_shift.py` | `python -m src.fetch_wsb_arctic_shift --start D --end D --out f.parquet` | Subreddit history through Arctic Shift, no key |
@@ -165,7 +163,7 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | | `bookforge` | `python3 -m bookforge.forge manuscript.md`; skill in `bookforge/skill` | Book and script writing with search over transcripts; its skill still points at `/Users/ashley` paths |
 | | `anti-ai-writing/anti_ai_checker.py` | `python3 anti_ai_checker.py` | The checker behind the `anti-ai-writing` skill |
 | | `youtube-narrative-guide/`, `shortform-narrative-guide/` | read | Narrative frameworks for scripts and shorts |
-| | `clipforge publish`, `clipforge youtube` | `uv run --project "P/33 lumr/clipforge" clipforge publish prepare\|check\|frames\|compose\|push` | Title, description, chapters, tags and thumbnail for a video; `push` goes live only with `--apply`. The YouTube login is not set up on this Mac |
+| | `clipforge publish`, `clipforge youtube` | `uv run --project "P/33 lumr/clipforge" clipforge publish prepare\|check\|frames\|compose\|push` | Title, description, chapters, tags and thumbnail for a video; `push` goes live only with `--apply --confirm-id <id>`. The YouTube login is not set up on this Mac |
 | | `dataforge` | Python import (`sources/youtube.py`, `sources/youtube_transcript.py`) | YouTube analytics and comments; transcripts without a key |
 | | `security-check.sh` | `bash security-check.sh` | Read-only audit of agent settings and editor startup files after a package scare |
 | | lumr-studio extras | set `LUMR_STUDIO_EXTRAS=publish_kit,overlays` | Adds overlays and a publish kit to the plugin; off by default |
@@ -183,7 +181,7 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | | `spike/fetch-photos.mjs` | `node spike/fetch-photos.mjs` | Photos from Wikimedia Commons, no key |
 | 38 life-management | `print.sh` | `"00-09 System/01 Tools/01.01 Print to PDF/print.sh" "<Plan.md>"` | A plan's text as a letter-size PDF through headless Brave |
 | 39 house-hunt | `scripts/build_pdf.py`, `build_tour_pdf.py`, `build_review.py` | `scripts/.venv/bin/python scripts/build_pdf.py` | House shortlist reports as PDF; `scripts/.venv` is not built on this Mac, so install `scripts/requirements.txt` into it first |
-| 40 essay-check | `eval/detector/score.py` | `.venv/bin/python -I score.py` in `eval/detector/` | Local score for how machine-written a text reads; ranks, gives no verdict |
+| 40 essay-check | `eval/detector/score.py` | `.venv/bin/python -I score.py` in `eval/detector/` | Scores every essay in the eval corpus with a local AI-text detector; ranks, gives no verdict. `detector_lib.py` holds the model |
 | | `server/extract/docx.ts`, `pdf.ts`; `eval/scripts/print_pdf.js` | imports; `node print_pdf.js <playwright dir> in.html out.pdf` | Text from Word and PDF files, flagging hidden text; HTML to PDF |
 | 41 army-builder | `fetch-core-rules`, `fetch-stratagems`, `fetch-datasheets`, `fetch-meta` | `npm run <name>` | Warhammer rules, stratagems, datasheets and tournament stats |
 | | `ocr-codex` | `npm run ocr-codex -- <pdf>` | OCR of codex photos with macOS Vision and deskew |
@@ -192,7 +190,7 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | | `audit`, `merge-rules`, `new-codex`, `fetch-data`, `import-data` | `npm run <name>` | Rules-data scorecard; re-apply hand-written rules; import a new codex; fetch and normalise army data |
 | 42 real-voice | speak app | `uv run python -m speak.app` in `prototype/` | Local text to speech at `127.0.0.1:8840`; can feed a virtual mic |
 | | `likeness/add_voice.py` | `uv run python likeness/add_voice.py me <recording.m4a> --mine` | Clone a voice from about 90 seconds of audio |
-| | `likeness/score.py`, `refine_voice.py` | `uv run python likeness/score.py` in `prototype/` | Score how closely a cloned voice matches, and how clear its words are |
+| | `likeness/score.py`, `refine_voice.py` | `uv run python likeness/score.py` in `prototype/` | Score how closely a cloned voice matches and how clear its words are; find the best part of a long recording to clone from |
 | 43 color-builder | `scripts/build-paints.mjs` | `npm run paints` | Paint tables into the app's data file |
 | 44 learn-later | `learn.py` | `learn` | The learning queue; Friday digest by launchd |
 
