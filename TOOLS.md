@@ -15,7 +15,7 @@ A number like "33 lumr" is a folder under `~/Documents/Code/10-19 Projects/`. "R
 | **Words only** from YouTube, to read now: talks, podcasts, battle reports | `yt-dlp` captions, no video (command below) | Seconds per video, a few MB of text |
 | YouTube words **saved for a later session** as a pebbl handoff | `ytscript` (33 lumr, run from its folder) | Seconds; writes into the current project's pebbl |
 | **No captions on YouTube**, or a local audio or video file | `mlx_whisper` (`~/.local/bin`) | Local and slow; downloads the audio first |
-| A recording turned into **notes** (summary, takeaways, actions) | `hammy` (33 lumr, run from its folder) | Local transcription plus a language model; needs `hammy setup` once, not done yet |
+| A recording turned into **notes** (summary, takeaways, actions) | `hammy <file>` | Local transcription, then a language model writes the notes; `--llm none` gives the transcript only |
 | A park **meeting** recording | `bin/park transcribe`, inside 36 Mobile-Home-Parks only | Local; files the audio with the meeting |
 | A local video the owner is **editing** | lumr-studio plugin (`transcribe`, then its skills) | Local; first use downloads two models, ask first |
 
@@ -43,28 +43,27 @@ Keep downloads in the session scratchpad, never in a repo: they are other people
 | A long video into **vertical shorts** in a batch | `clipforge` (33 lumr, run from its folder) | Local model by default |
 | **Record a web page or prototype** clicking through as a video | the reel recorders in 12 portfolio (`tools/explorer-reel`) | Local; Node and ffmpeg |
 | A **new video from a prompt** | `generate` skill | Paid per call, under its budget cap |
-| **Publish** a finished video to YouTube with title, chapters and thumbnail | `clipforge publish` (33 lumr) | Dry run by default; going live is the owner's call, and the YouTube login is not set up on this Mac |
 | A video **rendered from code** (canvas, SVG, 3D) with narration | `code-video` skill in 35 local-models | Local; not yet proven end to end, and its default voice sends the text to Microsoft |
 
 ## Images
 
-Heavy local image jobs share one GPU. The image-edit MCP queues by itself; call its `status` to see who holds the GPU and `free_memory` to unload idle models. Wrap any other local job over about 10 GB in `gpu_lock.py run --label <name> --gb <N> -- <command>` (in 13 proxy-magic, `products/tools/localgen/`).
+Heavy local image jobs share one GPU. The image-edit MCP queues by itself and needs ComfyUI running: its `status` tool says who holds the GPU and, when ComfyUI is down, the command that starts it; `free_memory` unloads idle models. Wrap any other local job over about 10 GB in `gpu_lock.py run --label <name> --gb <N> -- <command>` (in 13 proxy-magic, `products/tools/localgen/`).
 
 | Need | Tool | Cost |
 |---|---|---|
 | A new image, free and private | image-edit MCP `generate_image` (local Qwen) | Free; minutes |
-| A new image from a hosted model (nano-banana, gpt-image, z-image) | `generate` skill | Paid per call, under its budget cap |
+| A new image from a hosted model (nano-banana, gpt-image, Seedream, Flux, Ideogram, Recraft and more) | `generate` skill | Paid per call, under its budget cap |
 | Change one boxed area and keep every other pixel | image-edit MCP `edit_region`, then `judge_edit` for a verdict | Free; minutes |
-| Change a whole image by instruction, **lighting and colour included** | Local: `mflux-generate-qwen-edit`, `mflux-generate-flux2-edit`, `mflux-generate-flux3-edit`. Hosted: `generate --ref <image>` | Local is free; there is no dedicated relight tool for ordinary images |
+| Change a whole image by instruction, **relighting and recolouring included** | image-edit MCP `edit_region` with the box set to the whole image (local Qwen-Image-Edit). Other local models: `mflux-generate-flux2-edit`, `mflux-generate-flux3-edit`. Hosted: `generate --ref <image>` | Free; about a minute for a 1024-pixel image |
 | Relight a painted Magic card, or change one thing on it | `prompt_writer.py --edit-from <card> --relight` in 13 (guide: `products/painting/20.03 Relight a paint.md`) | About $0.15 a card |
 | **Upscale** | `upscayl-bin` inside Upscayl.app (seven 4x models) | Free and fast; `mflux-upscale-seedvr2` only when asked |
-| **Cut out** a subject or remove a background | No general command. Card art: `pipeline cutout auto --segment rembg` in 29, or `breakout_scalpel.py clip --segment vision` in 13 | Local and free; the `fal:` segment options are paid |
+| **Cut out** a subject or remove a background | `swift ~/dev-tools/bin/cutout.swift <image> <out.png>` (macOS Vision; `--mask` or `--crop`). Card art has its own: `pipeline cutout` in 29, `breakout_scalpel.py clip` in 13 | Free; about a second |
 | Inpaint by mask, control by edge or depth, variations, try-on, train a style | `mflux-generate-fill`, `-controlnet`, `-depth`, `-redux`, `-in-context-catvton`, `mflux-train` | Free, but their weights are not downloaded: tens of GB on first use, ask first |
-| Convert, resize, optimise | `sips`, `cwebp`, `ffmpeg` | ImageMagick and pngquant are not installed |
+| Convert, resize, optimise | `magick`, `sips`, `cwebp`, `pngquant`, `ffmpeg` | Instant |
 | Tag a folder of images, or search images and text by meaning | `tag_images.py` and `search.py` in 13 (`products/themes/rick-and-morty/tools/`) | Tagging defaults to a paid model; search is local |
 | Magic proxy card art, sketch to print | `pipeline` (29 proxy-pipeline, run from its folder) | Stops for the owner's pick; paid and GPU steps are opt-in |
 
-The `mflux` models already downloaded are Qwen-Image 2.1 Turbo, Flux 2 klein, Flux 3 klein, ERNIE-Image Turbo and Qwen-Image-Edit 2511: use an `mflux` text-to-image command only when the owner names the model. ComfyUI (26 comfyui) holds Qwen-Image 2512 and Qwen-Image-Edit 2511 and is started by hand; `scripts/qwen_edit.py` in 29 drives it.
+The catalog lists all 44 `mflux` commands by job. The weights already downloaded are Flux 2 klein, Flux 3 klein, ERNIE-Image Turbo, Qwen-Image 2.1 Turbo (pass `-m qwen-image-2.1-turbo`: the default model of that command is not downloaded) and Qwen-Image-Edit 2511. Use an `mflux` text-to-image command only when the owner names the model. ComfyUI (26 comfyui) holds Qwen-Image 2512 and Qwen-Image-Edit 2511 and is started by hand; the image-edit MCP and `scripts/qwen_edit.py` in 29 both drive it.
 
 ## Text off a page or a picture
 
@@ -126,17 +125,35 @@ There is no general store where a note or a document goes in and is found later.
 | Lore for a world | the `lore-build` skill and `tools/search.py` in 21 lore-builder |
 | Documents with search by meaning | Only Odysseus (35 local-models) is built for it, and it is not running and its skill is not installed: ask the owner |
 
-## Reports, charts, sound and capture
+## Reports, decks, charts, sound and capture
 
 | Need | Tool |
 |---|---|
+| A research report of several files as one designed PDF, with cover and contents | `render_pdf.py` in the `research-planner` skill (run line in the catalog) |
+| The sources in a cited report checked again by fresh agents | `verify-citations.md` in the `research-planner` skill |
 | A plan as a clean PDF | `print.sh` in 38 life-management (`00-09 System/01 Tools/01.01 Print to PDF/`) |
 | Any HTML page as a PDF | Brave, headless, with its print-to-PDF flag; Chrome is not installed |
-| A Word, PowerPoint, Excel or PDF file | the `docx`, `pptx`, `xlsx` and `pdf` skills |
+| A slide deck | The Slides artifact type in the Claude app; the `pptx` skill only when a PowerPoint file is asked for |
+| A Word, PowerPoint, Excel or PDF file | the `docx`, `pptx`, `xlsx` and `pdf` skills. LibreOffice and their Python and Node libraries are not installed on this Mac, so their build and check scripts will not run as they stand: say so before promising one |
+| A chart | Read the `dataviz` skill first, then an Artifact or the chart tool |
 | An animated chart as a video with sound | `source_code/lib/animation.py` in 16 |
 | Sound effects made without samples | `audio_engine` in 16 |
 | A screenshot of one Mac window | `scripts/capture.swift` in 22 tavern |
 | A rendered web page copied into Paper as layers | `to-paper.mjs` in 12 portfolio (`tools/explorer-reel`) |
+
+## The YouTube channel
+
+All in 33 lumr, run from its folder (commands in the catalog). The YouTube login is not set up on this Mac, so every row marked "login" fails until the owner signs in with `clipforge youtube login`; uploading and changing a live video are the owner's call.
+
+| Need | Tool |
+|---|---|
+| Title, description, chapters and tags for a video | `clipforge publish prepare`, then `clipforge publish check`; the lumr-studio `publish-kit` extra drafts the same kit and is off by default |
+| A thumbnail: pick frames from the video, add the text | `clipforge publish frames`, then `clipforge publish compose` |
+| Put the kit on a video | `clipforge publish push` (login; dry run unless told to apply) |
+| Upload privately with a later public date | `python -m clipforge.youtube_upload` (login) |
+| Titles that follow the channel's own patterns | `python -m clipforge.creator_profile --learn` (login) |
+| How videos performed | `dataforge`: load a YouTube Studio export with `load_analytics_csv`, then `get_top_videos` and `record_retention_audit`. No data is loaded on this Mac, and nothing here calls YouTube for analytics |
+| Script and shorts structure | `youtube-narrative-guide/` and `shortform-narrative-guide/` |
 
 ## Writing and design
 

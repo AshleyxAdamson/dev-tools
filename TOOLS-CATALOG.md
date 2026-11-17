@@ -11,19 +11,19 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | Skill | Source | Does |
 |---|---|---|
 | `activity-check` | `~/dev-tools/skills` | Diagnose a hot, slow or draining Mac |
-| `anti-ai-prose` | `~/dev-tools/skills` | Draft or edit prose in Ashley's voice |
+| `anti-ai-prose` | `~/dev-tools/skills` | Draft or edit prose in Ashley's voice. `python3 ~/.claude/skills/anti-ai-prose/anti_ai_checker.py <file>` gives a pass, warn or rewrite verdict with the flagged lines |
 | `design-spike` | `~/dev-tools/skills` | Several design directions as HTML mockups, critiqued |
 | `flare-strategy` | `~/dev-tools/skills` | Advice on forward-looking retrieval for an agent |
-| `generate` | `~/dev-tools/skills` | Paid image and video generation with a budget cap. Images: nano-banana (and pro, 2), gpt-image-2, z-image. Video: kling, seedance. `--ref` edits from an image. No upscale or relight job |
-| `research-planner` | `~/dev-tools/skills` | Multi-phase research with checked citations |
+| `generate` | `~/dev-tools/skills` | Paid image and video generation with a budget cap: `python3 ~/.claude/skills/generate/scripts/generate.py --model M --prompt "..." [--ref IMAGE --n N --aspect 1:1 --budget B --max-cost C --out DIR --dry-run]`. Images: nano-banana, nano-banana-pro, nano-banana-2, gpt-image-2, ideogram-v3, seedream-4.5, seedream-5-pro, flux-2-pro, flux-3, flux-kontext-multi (needs `--ref`), recraft-v3, qwen-image, hidream, z-image. Video: kling, seedance. Keys come from the environment, then the Keychain. No upscale or relight job |
+| `research-planner` | `~/dev-tools/skills` | Multi-phase research with checked citations. Inside it: `render_pdf.py` (a folder of numbered Markdown files into one designed PDF: `DYLD_FALLBACK_LIBRARY_PATH=$(brew --prefix)/lib uv run --with weasyprint --with markdown python ~/.claude/skills/research-planner/render_pdf.py --dir "<folder>" --title "..." [--theme care\|default --out FILE --no-open]`), `verify-citations.md` (fresh agents re-check every source), `packaging.md` (report skeleton and folder rules). It makes no slide decks |
 | `skill-builder` | `~/dev-tools/skills` | Build or audit a skill |
-| `video-grab` | `~/dev-tools/skills` | Screens, transcript and file from a YouTube video |
+| `video-grab` | `~/dev-tools/skills` | Screens, transcript and file from a YouTube video. `scripts/grab.py search "<query>"`, `fetch <url> --out <dir>`, `at <video-folder> <times>` (exact frames from a video already fetched) |
 | `learn-later`, `socratic-tutor` | `P/44 learn-later/skills` | Learning queue; structured tutoring |
 | `ship`, `state`, `longrun`, `checkup` | `~/.claude/skills` | Land work on main; show leftovers; long runs; weekly pipeline repair |
 | `secure-public-url` | `~/.claude/skills` | Publish a local service through Tailscale Funnel, sandboxed |
 | `grilling` (`grill-me` calls it), `tdd`, `pr`, `retro`, `show-me`, `writing-for-agents` | `~/.claude/skills` | Interview a plan; test-first work; PR body; retrospective; visual explainer; docs for agents |
 | `assemble-takes`, `splice-clips`, `tight-cut`, `ui-feedback`, `what-to-cut` | lumr-studio plugin | Video editing on one source video |
-| `anti-ai-writing`, `deal-chart`, `doctorg`, `longevity-scholar`, `aubrai-longevity`, `docx`, `pdf`, `pptx`, `xlsx`, `docs`, `google-workspace` and the rest | `~/.claude/skills/synced` | Skills synced from the Claude account |
+| `anti-ai-writing`, `deal-chart`, `doctorg`, `longevity-scholar`, `aubrai-longevity`, `docx`, `pdf`, `pptx`, `xlsx`, `docs`, `google-workspace`, `skill-creator` and the rest | `~/.claude/skills/synced` | Skills synced from the Claude account. Their scripts include PDF form filling (`pdf`), deck text and thumbnails (`pptx`), tracked changes and comments (`docx`), formula recalculation (`xlsx`), a contract table builder (`deal-chart`). LibreOffice, pandoc and the Python and Node libraries they import are not installed on this Mac |
 
 ### MCP servers and plugins
 
@@ -41,10 +41,11 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 |---|---|---|
 | `pebbl` | Project memory: decisions, handoffs, search | Runs the `~/factory/pebbl` clone; source in `P/34 pebbl` |
 | `learn` | Learning queue (`add`, `list`, `done`, `friday`) | Runs `P/44 learn-later/learn.py` |
+| `hammy` | A recording into a transcript and notes: `hammy <file> [--output DIR --llm claude_code\|ollama\|none --word-timestamps]` | Runs `P/33 lumr/hammy` with its Mac models; notes go to `~/Lumr/hammy/stash` unless `--output` is given |
 | `yt-dlp` | Download video, audio or captions | Ready |
 | `mlx_whisper` | Local speech to text | Ready |
-| `mflux-*` (44) | Local image models. Weights present: `mflux-generate-qwen-2.1`, `-flux2`, `-flux3`, `-ernie-image-turbo` (new image); `-qwen-edit`, `-flux2-edit`, `-flux3-edit` (edit by instruction). Weights absent, large download on first use: `-fill` (inpaint), `-controlnet`, `-depth`, `-redux` (variations), `-kontext`, `-in-context-catvton` (try-on), `-z-image`, `-krea2`, `-ideogram4`, `-fibo`, `mflux-upscale-seedvr2`, `mflux-upscale-controlnet`. Also `mflux-train` (LoRA), `mflux-info <image>`, `mflux-capabilities` | Ready |
-| `sips`, `cwebp`, `dwebp`, `cjpeg` | Convert, resize and compress images | Ready; ImageMagick and pngquant are not installed; rembg is only in 29 proxy-pipeline's venv |
+| `mflux-*` (44) | Local image models; every command is in the section "mflux commands" below | Ready; most weights are not downloaded |
+| `magick`, `pngquant`, `sips`, `cwebp`, `dwebp`, `cjpeg` | Convert, resize and compress images | Ready; rembg is only inside the 29 proxy-pipeline environment |
 | `ollama`, `llama-server`, `llama-cli` | Local language models | Ollama always running on `127.0.0.1:11434` |
 | `claude-local`, `claude-glm`, `claude-kimi` | Claude Code on Ollama, GLM, Kimi | From `~/factory/agentbox/bin`; on request only |
 | `codex`, `opencode` | Other agent runners | On request only |
@@ -57,6 +58,28 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `uv`, `bun`, `pnpm`, `fnm`, `rustup`, `tmux`, `direnv`, `geckodriver` | Runtimes and helpers | Ready |
 
 Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resources/bin/upscayl-bin -i IN -o OUT -m /Applications/Upscayl.app/Contents/Resources/models -n ultrasharp-4x -s 4 -f png` (models: digital-art, high-fidelity, remacri, ultramix-balanced, ultrasharp, upscayl-lite, upscayl-standard, all 4x). Brave prints HTML to PDF headless. No command of their own: Odysseus (local AI workspace, not running), Obsidian (vault holds one note), Ghostty, Spokenly.
+
+## mflux commands
+
+All 44, version 0.23.0. Output is `image.png` in the current folder unless `--output` is given. Shared flags: `--prompt`, `--seed`, `--steps`, `--width`, `--height`, `-q 4|8` (less memory), `--lora-paths`, `--low-ram`. "Here" means the weights are already downloaded; every other command downloads tens of GB on first use, so ask first.
+
+| Job | Commands | Weights |
+|---|---|---|
+| New image from text | `mflux-generate-flux2` (Flux 2 klein), `mflux-generate-flux3` (Flux 3 klein), `mflux-generate-ernie-image-turbo`, `mflux-generate-qwen-2.1 -m qwen-image-2.1-turbo` | Here |
+| | `mflux-generate` (Flux 1), `mflux-generate-qwen`, `mflux-generate-ernie-image`, `mflux-generate-z-image`, `mflux-generate-z-image-turbo`, `mflux-generate-krea2`, `mflux-generate-boogu`, `mflux-generate-lens`, `mflux-generate-ming` (transparent design assets), `mflux-generate-ideogram4` (text in images; licence click needed), `mflux-generate-fibo` (structured prompts) | Not here |
+| Edit by instruction | `mflux-generate-flux2-edit --image-paths IN --prompt "..."`, `mflux-generate-flux3-edit` (up to 10 reference images), `mflux-generate-qwen-2.1-edit -m qwen-image-2.1-turbo` | Here |
+| | `mflux-generate-qwen-edit` (its default model is not here; the 2511 weights are, under another name), `mflux-generate-kontext`, `mflux-generate-in-context-edit`, `mflux-generate-fibo-edit` (also removes backgrounds) | Not here |
+| Inpaint by mask | `mflux-generate-fill --image-path IN --masked-image-path MASK`, `mflux-generate-qwen-2.1-controlnet` | Not here |
+| Control by edge or depth | `mflux-generate-controlnet`, `mflux-generate-depth`, `mflux-generate-krea2-controlnet`, `mflux-generate-z-image-controlnet` | Not here |
+| Depth map of an image | `mflux-save-depth --image-path IN` | Not here |
+| Variations and references | `mflux-generate-redux`, `mflux-generate-in-context` | Not here |
+| Virtual try-on | `mflux-generate-in-context-catvton --person-image --person-mask --garment-image` | Not here |
+| Upscale | `mflux-upscale-seedvr2 --image-path IN --resolution 2x`, `mflux-upscale-controlnet` | Not here |
+| Concept heatmap | `mflux-concept`, `mflux-concept-from-image` | Not here |
+| Prompt from an image, refine a prompt | `mflux-inspire-fibo`, `mflux-refine-fibo` | Not here |
+| Train a style | `mflux-train --config FILE [--dry-run]`; `mflux-lora-library list` | No model needed to list |
+| Housekeeping | `mflux-save` (save a smaller copy of a model), `mflux-info IMAGE` (how an image was made), `mflux-capabilities`, `mflux-completions` | No model needed |
+
 
 ## Loom 3 (source: `~/factory/agentbox`)
 
@@ -100,6 +123,7 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | | `bin/agent-deck-fix-session-paths.sh` | — | One-off repoint of agent-deck sessions from `/Users/ashley`; agent-deck is not installed here |
 | | `statusline/statusline.sh` | — | The Claude Code status line; not linked into `~/.claude` or set in its settings on this Mac |
 | | skills `loom-work`, `loom-refine` | — | Frozen with the loom queue; not linked into `~/.claude/skills` |
+| | `bin/cutout.swift` | `swift ~/dev-tools/bin/cutout.swift <image> <out.png> [--mask \| --crop]` | Remove the background from any image with macOS Vision; local, about a second |
 | `~/factory/agentbox` | `claude/hooks/guard.sh` | runs on every Bash, Write and Edit | The guard: blocks unasked PRs, `git add -A` and the like |
 | | `ops/health.sh`, `lobby-up.sh`, `maintenance.sh`, `notify.sh`, `lock-screen.sh` | run by launchd | Host health, Remote Control lobby, weekly updates, Telegram notice, screen lock |
 | `~/factory/model-check` | `run.sh` | run by launchd | Scheduled check of the image and embedding model picks |
@@ -158,7 +182,7 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | 31 fairland-rv-census | `scripts/stac_inventory.py` | `uv run python scripts/stac_inventory.py` | Lists aerial and satellite scenes over an area, no key |
 | 32 loom | `loom` | — | Frozen 2026-11-09; do not run |
 | 33 lumr | `ytscript` | `uv run --project "P/33 lumr/ytscript" ytscript <url-or-id> [--timestamps --no-handoff]` | YouTube transcript saved as a file and a pebbl handoff |
-| | `hammy` | `uv run --project "P/33 lumr/hammy" hammy <file>` | Transcribe a recording into notes: summary, takeaways, actions; needs `hammy setup` once, not done on this Mac |
+| | `hammy` | `hammy <file>` (on PATH) | Transcribe a recording into notes: summary, takeaways, actions. Config in `~/.config/hammy/config.json` |
 | | `clipforge` | `uv run --project "P/33 lumr/clipforge" clipforge <file-or-url> [--num-clips 3]` | Long video into vertical shorts: highlights, reframe, subtitles |
 | | `bookforge` | `python3 -m bookforge.forge manuscript.md`; skill in `bookforge/skill` | Book and script writing with search over transcripts; its skill still points at `/Users/ashley` paths |
 | | `anti-ai-writing/anti_ai_checker.py` | `python3 anti_ai_checker.py` | The checker behind the `anti-ai-writing` skill |
@@ -167,6 +191,16 @@ Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resou
 | | `dataforge` | Python import (`sources/youtube.py`, `sources/youtube_transcript.py`) | YouTube analytics and comments; transcripts without a key |
 | | `security-check.sh` | `bash security-check.sh` | Read-only audit of agent settings and editor startup files after a package scare |
 | | lumr-studio extras | set `LUMR_STUDIO_EXTRAS=publish_kit,overlays` | Adds overlays and a publish kit to the plugin; off by default |
+| | `clipforge publish frames`, `compose` | `clipforge publish frames <video> [--count N]`; `clipforge publish compose --frame N --text "LINE\|LINE"` (same `uv run` prefix) | Pick sharp, varied frames into a gallery; draw a 1280x720 thumbnail with text. `compose` needs `--font` or a thumbnail spec, which is not on this Mac |
+| | `clipforge.thumbnail` | `python -m clipforge.thumbnail --build-gallery DIR` | A picker page of frames; a thumbnail with your own font |
+| | `clipforge.youtube_upload`, `youtube_flip` | `python -m clipforge.youtube_upload FILE --title T`; `python -m clipforge.youtube_flip [--dry-run]` | Upload as private with a public date a week later; flip due videos to public. Need the YouTube login |
+| | `clipforge.creator_profile` | `python -m clipforge.creator_profile --learn [--dry-run]` | Learn the channel's title patterns into a profile. Needs the YouTube login |
+| | clipforge modes | `clipforge <source> --mode shorts\|edit\|both\|narrative\|editor` | Shorts, a tightened edit, a narrative cut, or the editor page. Calls `hammy` for the transcript and a local model by default |
+| | `dataforge` analytics | `from dataforge.sources.youtube import load_analytics_csv, get_top_videos`; `from dataforge.reports import record_retention_audit` | Load a YouTube Studio export into a local database; top videos; a written retention audit per video. No data loaded on this Mac |
+| | `bookforge.forge.companion`, `bookforge.ulyz_to_md` | Python import; `python -m bookforge.ulyz_to_md SRC` | An editor's report on a manuscript; Ulysses notes to Markdown |
+| | `anti-ai-writing/voice_scorer.py` | `python3 voice_scorer.py "text"` | Voice similarity score; needs writing samples that are not on this Mac |
+| | lumr-studio plugin tools | through the plugin | `transcribe`, `read_transcript`, `find_words`, `analyze_take`, `get_edit`, `set_edit`, `preview`, `render`, `look`, `frames`, `review`, `assemble`, `carry_edit`, `job_status`, `forget_taste`. The clone at `~/lumr-studio` is the current source; the copy inside `P/33 lumr/studio` is older |
+| | `docs/` | read, starting at `docs/index.md` | Specs and module notes for every lumr tool |
 | 34 pebbl | `ops/check-memory-health.sh` | `bash ops/check-memory-health.sh` | Checks and repairs pebbl stores |
 | 35 local-models | `MODELS.md` | read | Installed models and which one for what |
 | | Unlimited OCR 2 | run line in `MODELS.md` | Document OCR with block positions |
