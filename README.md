@@ -8,6 +8,7 @@ there is never a live copy quietly drifting from a repo copy.
 
 | Folder | What it is |
 |---|---|
+| `TOOLS.md` | Which tool for which job, across every repo. `~/.claude/CLAUDE.md` imports it, so every agent session reads it. |
 | `skills/` | The nine Claude Code skills I authored. |
 | `statusline/` | The Claude Code status line I use, with its full history. |
 | `bin/` | Health checks for this repo's symlinks, the Johnny Decimal name checker, and the Obsidian tag checker. |

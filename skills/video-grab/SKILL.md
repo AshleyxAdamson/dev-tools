@@ -1,6 +1,6 @@
 ---
 name: video-grab
-description: Pull timed screens, the transcript and the video file from YouTube videos into a folder an agent can read. Use when the user wants screens, screenshots, frames or a transcript from a YouTube video, wants to study an app or product from its demo, onboarding or review videos (a UX analysis, a competitor teardown), or says "video-grab".
+description: Pull timed screens, with the transcript beside them, and the video file from YouTube videos into a folder an agent can read. Use when the user wants screens, screenshots or frames from a YouTube video, wants to study an app or product from its demo, onboarding or review videos (a UX analysis, a competitor teardown), or says "video-grab". Not for words only (a talk, podcast or battle report) - fetch captions with yt-dlp instead, see ~/dev-tools/TOOLS.md.
 ---
 
 # Video Grab
