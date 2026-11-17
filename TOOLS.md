@@ -92,14 +92,13 @@ Read `~/Documents/Code/10-19 Projects/35 local-models/MODELS.md` before picking 
 
 `codex`, `opencode`, `claude-local`, `claude-glm`, `claude-kimi` and firstmate (25, a crew of agents with its own merge flow) are other ways to run an agent: start them only when the owner asks for that one.
 
-## Landing, memory and sharing
+## Landing, sharing and keys
 
 | Need | Tool |
 |---|---|
 | Land finished work on main | `/ship`, the only door. The `loom` queue (32) and the `loom-work` and `loom-refine` skills are frozen; firstmate's merge flow is not used for the owner's repos |
-| Remember a decision or hand off | `pebbl` |
 | A public link to something running locally | `secure-public-url` skill; `scripts/studio-public-url.sh` in 41 is for DropList only |
-| An API key for a command | `products/tools/with-keys <command>` in 13 proxy-magic reads it from the Keychain; `set-key` stores one. Never paste a key into a file |
+| A fal, Gemini or OpenAI key for a command | `products/tools/with-keys <command>` in 13 proxy-magic reads it from the Keychain; `set-key <NAME>` stores one. Never paste a key into a file |
 
 ## Writing and design
 
@@ -116,7 +115,7 @@ Read `~/Documents/Code/10-19 Projects/35 local-models/MODELS.md` before picking 
 | Need | Tool |
 |---|---|
 | Magic cards, rulings, deck checks | mtg-cards MCP. The `mtg` command in 11 is the same code; 13 holds a copy: don't add a third |
-| Stock prices and financials | The Massive wrapper `glassdoor_stock/massive.py` in 17 (pages and retries on 429). 16 and 24 hold their own copies: reuse one, don't write a fourth |
+| Stock prices and financials | The Massive wrapper `glassdoor_stock/massive.py` in 17 (pages and retries on 429). 16 (`source_code/lib/data_massive.py`) and 24 (`fetch_prices.py`) have their own Massive clients: reuse one, don't write a fourth |
 | Congress trades | `source_code/lib/data_quiver.py` in 16 (paid Quiver key) |
 | Reddit history | `src/fetch_wsb_arctic_shift.py` in 18 (no key) |
 | Warhammer core rules, stratagems, datasheets | the `npm run fetch-*` scripts in 41 army-builder |

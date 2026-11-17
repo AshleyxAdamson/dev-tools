@@ -2,7 +2,7 @@
 
 For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.md` says which one to pick when several fit; this file says what exists and how to run it. Read it before writing a new script for a job that may already be solved.
 
-`P/` is `~/Documents/Code/10-19 Projects/`. "Anywhere" means on PATH, a skill in `~/.claude/skills`, an enabled plugin, or a registered MCP server. "Folder" means run it from its project folder with the command shown. Last swept 2026-11-17.
+`P/` is `~/Documents/Code/10-19 Projects/`. "Anywhere" means on PATH, a skill in `~/.claude/skills`, an enabled plugin, or a registered MCP server. "Folder" means run it from its project folder with the command shown. Last swept 2026-11-16.
 
 ## Usable anywhere
 
@@ -43,7 +43,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `learn` | Learning queue (`add`, `list`, `done`, `friday`) | Runs `P/44 learn-later/learn.py` |
 | `yt-dlp` | Download video, audio or captions | Ready |
 | `mlx_whisper` | Local speech to text | Ready |
-| `mflux-*` (about 45) | Local image models: Flux, Z-Image, Qwen, Krea, upscale, training | Ready |
+| `mflux-*` (44) | Local image models: Flux, Z-Image, Qwen, Krea, upscale, training | Ready |
 | `ollama`, `llama-server`, `llama-cli` | Local language models | Ollama always running on `127.0.0.1:11434` |
 | `claude-local`, `claude-glm`, `claude-kimi` | Claude Code on Ollama, GLM, Kimi | From `~/factory/agentbox/bin`; on request only |
 | `codex`, `opencode` | Other agent runners | On request only |
@@ -65,7 +65,9 @@ Apps with no command of their own: Upscayl (image upscale, used by the card prin
 | | `bin/tag-check.py` | `~/dev-tools/bin/tag-check.py` | Lists Obsidian tags outside the allowed branches |
 | | `bin/check-dev-tools-health.sh` | — | Broken: written for `/Users/ashley`, which is not this Mac's user |
 | | `bin/vault-sync.sh` | — | Broken: needs `~/Dropbox`, which does not exist |
-| | `statusline/statusline.sh` | linked from `~/.claude` | The Claude Code status line |
+| | `bin/obsidian-theme.sh` | `~/dev-tools/bin/obsidian-theme.sh [--install\|--pull]` | Compares the Obsidian theme in the repo with the vault's copy; copies one over the other |
+| | `bin/agent-deck-fix-session-paths.sh` | — | One-off repoint of agent-deck sessions from `/Users/ashley`; agent-deck is not installed here |
+| | `statusline/statusline.sh` | — | The Claude Code status line; not linked into `~/.claude` or set in its settings on this Mac |
 | | skills `loom-work`, `loom-refine` | — | Frozen with the loom queue; not linked into `~/.claude/skills` |
 | `~/factory/agentbox` | `claude/hooks/guard.sh` | runs on every Bash, Write and Edit | The guard: blocks unasked PRs, `git add -A` and the like |
 | | `ops/health.sh`, `lobby-up.sh`, `maintenance.sh`, `notify.sh`, `lock-screen.sh` | run by launchd | Host health, Remote Control lobby, weekly updates, Telegram notice, screen lock |
@@ -74,7 +76,7 @@ Apps with no command of their own: Upscayl (image upscale, used by the card prin
 
 ## Project repos
 
-| Project | Tool | Run (from the project folder) | Does |
+| Project | Tool | Run (from the project folder, or the folder the Tool column names) | Does |
 |---|---|---|---|
 | 11 MTG-Deck-Builder | `mtg` | `uv run mtg search\|card\|rulings\|ideas\|check\|update\|art\|gallery\|print` | Same functions as the mtg-cards MCP |
 | | skills `commander-deck`, `print-deck` | load inside 11 or 13 | Build a Commander deck; order proxy prints |
@@ -82,12 +84,12 @@ Apps with no command of their own: Upscayl (image upscale, used by the card prin
 | | `tools/deck-reel`, `tools/meridian-reel` | `node record.mjs` | Record Paper frames, or the live Meridian prototype, as video |
 | 13 proxy-magic | `products/tools/with-keys`, `set-key` | `with-keys <command>`; `set-key <NAME>` | Run a command with API keys from the Keychain; store a key |
 | | `vendor/tcg-mint` (`mint`) | see its README | Render card images from card data through headless Chromium |
-| | theme tools in `products/themes/rick-and-morty/tools/` | e.g. `python3 -I tools/grab_episodes.py --fetch S1E6` | Episode screen grabs, reference-image search, image tagging, bible search |
+| | theme tools in `products/themes/rick-and-morty/tools/` | from the theme folder, e.g. `python3 -I tools/grab_episodes.py --fetch S1E6` | Episode screen grabs, reference-image search, image tagging, bible search |
 | | skills `card-round`, `friend-review`, `lore-pass`; agent `card-art-director` | inside `products/` | Card painting rounds and reviews for that deck |
 | | copy of `mtg` | — | Duplicate of 11; use 11 |
 | 15 LSTM_AI_Stock_Predictor | `run_live_signals.py`, `run_backtest_v4.py`, `research/evaluate.py` | `python <file>` | Stock forecaster and its sealed-holdout evaluation |
 | 16 congress-trading-investigation | `audio_engine` | `from audio_engine import Cue, render_track` | Synthesised sound effects and track mixing, no samples |
-| | `source_code/lib/data_quiver.py`, `show_trades.py` | `python show_trades.py [--all --csv f]` | Congress trades from Quiver (paid key) |
+| | `source_code/lib/data_quiver.py`, `source_code/show_trades.py` | `python source_code/show_trades.py [--all] [--csv f]` | Congress trades from Quiver (paid key) |
 | 17 Glassdoor-AI-Stock-Trader | `glassdoor_stock/massive.py`, `prices.py` | Python import | Prices and financials from Massive, with paging and retry |
 | | `download_glassdoor_dataset.py` | `python download_glassdoor_dataset.py` | Kaggle review dataset (Kaggle login) |
 | 18 WallStreetBets-Stock-Bot | `src/fetch_wsb_arctic_shift.py` | `python -m src.fetch_wsb_arctic_shift --start D --end D --out f.parquet` | Subreddit history through Arctic Shift, no key |
@@ -124,7 +126,7 @@ Apps with no command of their own: Upscayl (image upscale, used by the card prin
 | | `bin/drive` | `bin/drive ls\|find\|text <file>` | Read-only Google Drive through `rclone`; converts files to text |
 | | `bin/ocr.swift` | `swift bin/ocr.swift page.png` | Text from an image with macOS Vision |
 | 37 snap-vocab | `spike/run.ts`, `server/index.ts` | `npm run spike`, `npm run dev` | Photo to vocabulary card (paid APIs) |
-| 39 house-hunt | `scripts/build_pdf.py`, `build_tour_pdf.py`, `build_review.py` | `scripts/.venv/bin/python scripts/build_pdf.py` | House shortlist reports as PDF |
+| 39 house-hunt | `scripts/build_pdf.py`, `build_tour_pdf.py`, `build_review.py` | `scripts/.venv/bin/python scripts/build_pdf.py` | House shortlist reports as PDF; `scripts/.venv` is not built on this Mac, so install `scripts/requirements.txt` into it first |
 | 41 army-builder | `fetch-core-rules`, `fetch-stratagems`, `fetch-datasheets`, `fetch-meta` | `npm run <name>` | Warhammer rules, stratagems, datasheets and tournament stats |
 | | `ocr-codex` | `npm run ocr-codex -- <pdf>` | OCR of codex photos with macOS Vision and deskew |
 | | `icons`, `portraits` | `npm run icons` | Unit art into web masks and images |
@@ -142,9 +144,10 @@ No tools: 14, 20 (empty), 30 (reports only), 38, 40 (app code only).
 |---|---|---|
 | `com.agentbox.health` | `ops/health.sh` | Every 5 minutes |
 | `com.agentbox.lobby` | Remote Control lobby in tmux | Every 2 minutes |
+| `com.agentbox.lock` | `ops/lock-screen.sh` | At login |
 | `com.agentbox.maintenance` | brew and Claude Code updates | Sunday 04:00 |
 | `com.learnlater.friday` | `learn.py` Friday digest | Friday 17:00 |
 | `com.proxymagic.gpu-lock-check` | GPU lock check for image-edit | Every 2 minutes |
-| `com.proxymagic.model-check` | `~/factory/model-check/run.sh` | Scheduled; not confirmed how often |
+| `com.proxymagic.model-check` | `~/factory/model-check/run.sh` | 1st of each month, 09:10 |
 | `com.proxymagic.sync-refs` | reference sync in 13 | 03:30; failing, macOS blocks it from `~/Documents` |
 | `sh.brew.ollama` | Ollama | Always |
