@@ -14,7 +14,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `anti-ai-prose` | `~/dev-tools/skills` | Draft or edit prose in Ashley's voice |
 | `design-spike` | `~/dev-tools/skills` | Several design directions as HTML mockups, critiqued |
 | `flare-strategy` | `~/dev-tools/skills` | Advice on forward-looking retrieval for an agent |
-| `generate` | `~/dev-tools/skills` | Paid image and video generation with a budget cap |
+| `generate` | `~/dev-tools/skills` | Paid image and video generation with a budget cap. Images: nano-banana (and pro, 2), gpt-image-2, ideogram-v3, seedream, flux-2-pro, flux-3, flux-kontext-multi, recraft-v3, qwen-image, hidream, z-image. Video: kling, seedance. `--ref` edits from an image. No upscale or relight job |
 | `research-planner` | `~/dev-tools/skills` | Multi-phase research with checked citations |
 | `skill-builder` | `~/dev-tools/skills` | Build or audit a skill |
 | `video-grab` | `~/dev-tools/skills` | Screens, transcript and file from a YouTube video |
@@ -30,7 +30,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | Name | Source | Does |
 |---|---|---|
 | mtg-cards | `P/11 MTG-Deck-Builder` | Magic card search, rulings, tags, deck checks, art choice and print orders |
-| image-edit | `P/13 proxy-magic/products/tools/localgen/server.py` | Local image generation, region edits, edit judging, reading text and mana costs |
+| image-edit | `P/13 proxy-magic/products/tools/localgen/server.py` | `generate_image`, `edit_region`, `judge_edit` (verdict on a before and after), `read_text`, `read_mana`, `replace_mana` (redraw a card's mana cost), `plan_card_edit`, `card_edit_status`, `status` (who holds the GPU), `free_memory` |
 | paper | Paper app at `127.0.0.1:29979` | Read and write designs; down when the app is closed |
 | lumr-studio plugin | `P/33 lumr/studio/plugins/lumr-studio` (clone at `~/lumr-studio`) | Transcribe, cut, assemble and render one video |
 | Gmail, Calendar, Drive, Figma, Claude in Chrome, built-in browser | The Claude app | Connectors; not configured in `~/.claude.json` |
@@ -43,7 +43,8 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `learn` | Learning queue (`add`, `list`, `done`, `friday`) | Runs `P/44 learn-later/learn.py` |
 | `yt-dlp` | Download video, audio or captions | Ready |
 | `mlx_whisper` | Local speech to text | Ready |
-| `mflux-*` (44) | Local image models: Flux, Z-Image, Qwen, Krea, upscale, training | Ready |
+| `mflux-*` (44) | Local image models. Weights present: `mflux-generate-qwen-2.1`, `-flux2`, `-flux3`, `-ernie-image-turbo` (new image); `-qwen-edit`, `-flux2-edit`, `-flux3-edit` (edit by instruction). Weights absent, large download on first use: `-fill` (inpaint), `-controlnet`, `-depth`, `-redux` (variations), `-kontext`, `-in-context-catvton` (try-on), `-z-image`, `-krea2`, `-ideogram4`, `-fibo`, `mflux-upscale-seedvr2`, `mflux-upscale-controlnet`. Also `mflux-train` (LoRA), `mflux-info <image>`, `mflux-capabilities` | Ready |
+| `sips`, `cwebp`, `dwebp`, `cjpeg` | Convert, resize and compress images | Ready; ImageMagick, pngquant and rembg are not installed |
 | `ollama`, `llama-server`, `llama-cli` | Local language models | Ollama always running on `127.0.0.1:11434` |
 | `claude-local`, `claude-glm`, `claude-kimi` | Claude Code on Ollama, GLM, Kimi | From `~/factory/agentbox/bin`; on request only |
 | `codex`, `opencode` | Other agent runners | On request only |
@@ -55,7 +56,39 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `macmon` | Apple Silicon CPU and GPU monitor | Ready |
 | `uv`, `bun`, `pnpm`, `fnm`, `rustup`, `tmux`, `direnv`, `geckodriver` | Runtimes and helpers | Ready |
 
-Apps with no command of their own: Upscayl (image upscale, used by the card print steps), Odysseus (local AI workspace), Obsidian, Ghostty, Spokenly.
+Apps: Upscayl has a command inside it, `/Applications/Upscayl.app/Contents/Resources/bin/upscayl-bin -i IN -o OUT -m /Applications/Upscayl.app/Contents/Resources/models -n ultrasharp-4x -s 4 -f png` (models: digital-art, high-fidelity, remacri, ultramix-balanced, ultrasharp, upscayl-lite, upscayl-standard, all 4x). Brave prints HTML to PDF headless. No command of their own: Odysseus (local AI workspace, not running), Obsidian (vault holds one note), Ghostty, Spokenly.
+
+## Loom 3 (source: `~/factory/agentbox`)
+
+| Piece | Where | Does |
+|---|---|---|
+| `/ship` | `~/.claude/skills/ship` (`ship.sh check`, `ship.sh land`, `keep.sh`) | Commit by path, tests, a fresh reviewer fixes the diff, merge to main, push, remove the worktree and branch |
+| `/state` | `~/.claude/skills/state/state.sh` | Leftover branches, worktrees, uncommitted and unpushed work across every project; `tidy` removes only what is already on main |
+| `/longrun` | `~/.claude/skills/longrun` (`longrun.sh` paces it under Codex) | One goal over hours: one move per wake, landed with `/ship`, pebbl as the baton |
+| `/checkup` | `~/.claude/skills/checkup` | Weekly repair from the friction log: at most three fixes, each with a test |
+| guard | `claude/hooks/guard.sh`, `guard.py`; wired for Claude Code and Codex | Checks every shell command and file write; blocks are logged in `~/factory/logs/guard.log` |
+| global instructions | `claude/CLAUDE.md`, live at `~/.claude/CLAUDE.md`; `~/.codex/AGENTS.md` links to it | The owner's rules, and the import of `TOOLS.md` |
+| friction log | `~/factory/logs/friction.log` | One line per time the pipeline got in the way |
+| installers | `claude/install.sh`, `codex/install.sh` | Dry run by default; `--apply` wires the guard, skills and instructions |
+| tests | `make test` in `~/factory/agentbox` | Guard, ship, install and longrun tests; `tests/codex_live_test.sh` is separate and costs money |
+| Remote Control lobby | `ops/lobby-up.sh`, launchd `com.agentbox.lobby` | Keeps a tmux session ready so phone sessions start in the Projects folder |
+| health, notify | `ops/health.sh`, `ops/notify.sh` | Host checks every 5 minutes; Telegram notices, which are not configured, so messages pile up in `notify-undelivered.log` |
+| `pr`, `retro`, `tdd`, `secure-public-url` | `~/.claude/skills` | PR body when the owner asks for a PR; retrospective; test-first work; public link |
+| frozen | `P/32 loom`; skills `loom-work`, `loom-refine` in `~/dev-tools/skills` | The old queue, stopped 2026-11-09 |
+
+## Where notes and documents are kept
+
+| Store | Put in with | Find with | State |
+|---|---|---|---|
+| Learning queue | `learn add` | `learn list`; Friday digest | Works from any folder; links only |
+| pebbl, per repo | `pebbl log`, `pebbl handoff` | `pebbl search`, `pebbl context` | Works; one-line decisions, not documents |
+| Claude memory, per project | the agent writes files under `~/.claude/projects/<project>/memory/` | Loaded each session | Works; `import-memory` and `consolidate-memory` skills manage it |
+| Park logs and meetings | `bin/park` in `P/36` | `park status`, `park todo` | Works; parks only |
+| Lore bible | `lore-build` skill in `P/21` | `tools/search.py` | Works; one world per copy of the kit |
+| Odysseus | its app: notes, documents, mail, memory | its own search | Not running; its Claude skill is not installed |
+| bookforge transcript store | `bookforge/ingest.py` in `P/33 lumr` | its search | Gone: no database on this Mac |
+| Obsidian vault | `~/Documents/Obsidian Vault` | Obsidian | Holds one note |
+
 
 ## Home-root repos
 
@@ -82,39 +115,60 @@ Apps with no command of their own: Upscayl (image upscale, used by the card prin
 | | skills `commander-deck`, `print-deck` | load inside 11 or 13 | Build a Commander deck; order proxy prints |
 | 12 portfolio | `tools/explorer-reel` | `node record.mjs [id]`, `node composite.mjs` | Record HTML prototypes as video; `lib.mjs` is the shared recorder |
 | | `tools/deck-reel`, `tools/meridian-reel` | `node record.mjs` | Record Paper frames, or the live Meridian prototype, as video |
+| | `tools/explorer-reel/probe.mjs` | `node probe.mjs <page> [width] [--scene]` | Load a page; print its accessibility snapshot and take a screenshot |
+| | `tools/explorer-reel/drift/to-paper.mjs` | `node drift/to-paper.mjs --file <id> --page <id> --name N <page.html#selector>` | Copy a rendered page into Paper as editable layers; Paper must be open |
 | 13 proxy-magic | `products/tools/with-keys`, `set-key` | `with-keys <command>`; `set-key <NAME>` | Run a command with API keys from the Keychain; store a key |
 | | `vendor/tcg-mint` (`mint`) | see its README | Render card images from card data through headless Chromium |
 | | theme tools in `products/themes/rick-and-morty/tools/` | from the theme folder, e.g. `python3 -I tools/grab_episodes.py --fetch S1E6` | Episode screen grabs, reference-image search, image tagging, bible search |
 | | skills `card-round`, `friend-review`, `lore-pass`; agent `card-art-director` | inside `products/` | Card painting rounds and reviews for that deck |
 | | copy of `mtg` | — | Duplicate of 11; use 11 |
+| | `products/tools/localgen/gpu_lock.py` | `python3 gpu_lock.py status`; `python3 gpu_lock.py run --label X --gb N -- <command>` | The machine-wide GPU queue: heavy local jobs run one at a time, in arrival order |
+| | `products/tools/layout.py`, `layout_check.py` | `python3 layout.py plan`; `python3 layout_check.py <card> <layout.json>` | Plan a card's panels and draw the guide image; measure drift |
+| | `proxymagic/printing/upscale.py` | through `mtg print` or the mtg-cards `set_art` tool | Upscale card art with Upscayl to print size with bleed |
+| | card painting, in `products/themes/rick-and-morty/` | `tools/card_round.py decks/<deck> "<Name>"` | The entry point for painting one card; `polish.py` adds title, mana and text and upscales; `review_board.py` is the review page |
+| | `tools/prompt_writer.py` (same theme) | `--paint`; `--edit-from <card> --edit-prompt <file>`; `--edit-from <card> --relight`; `--cutout-test <art>` | Paint, edit, relight or cut out card art through fal (paid, about $0.15 a card) |
+| | `tools/breakout_scalpel.py` (same theme) | `clip --segment vision` | Cut a subject out and lay it over the frame; macOS Vision is the free option |
+| | `tools/tag_images.py`, `search.py`, `find_refs.py`, `print_prep.py` (same theme) | run from the theme folder | Tag reference images; search bible and images by meaning (local embeddings); find reference images; print files at 800 dpi with bleed |
+| | `tools/paper_mcp.py` (same theme) | Python import | A plain client for Paper's server, so a script can write to Paper |
 | 15 LSTM_AI_Stock_Predictor | `run_live_signals.py`, `run_backtest_v4.py`, `research/evaluate.py` | `python <file>` | Stock forecaster and its sealed-holdout evaluation |
+| | `run_significance.py`, `research/gate.py`, `score_holdout.py` | `python <file>` | Whether a result beats seed noise; accept or reject with a penalty for the number of tries; a once-only holdout score |
+| | `TrainingData/featuresPy/insiderbuying.py` | `python insiderbuying.py` | Insider buys from SEC Form 4 filings, no key |
+| | `TrainingData/sp500/download_sp500.py` | `python download_sp500.py` | S&P 500 prices by date including delisted names (Massive key) |
 | 16 congress-trading-investigation | `audio_engine` | `from audio_engine import Cue, render_track` | Synthesised sound effects and track mixing, no samples |
 | | `source_code/lib/data_quiver.py`, `source_code/show_trades.py` | `python source_code/show_trades.py [--all] [--csv f]` | Congress trades from Quiver (paid key) |
+| | `source_code/lib/animation.py` | `animate_lines`, `animate_bars`, `save_animation(..., audio_wav=)` | Animated charts as video with the sound mixed in |
+| | `source_code/lib/backtest.py`, `source_code/prefetch_data.py` | Python import; `python prefetch_data.py` | Follow-the-filing backtest; cache all the trade and price data |
 | 17 Glassdoor-AI-Stock-Trader | `glassdoor_stock/massive.py`, `prices.py` | Python import | Prices and financials from Massive, with paging and retry |
 | | `download_glassdoor_dataset.py` | `python download_glassdoor_dataset.py` | Kaggle review dataset (Kaggle login) |
 | 18 WallStreetBets-Stock-Bot | `src/fetch_wsb_arctic_shift.py` | `python -m src.fetch_wsb_arctic_shift --start D --end D --out f.parquet` | Subreddit history through Arctic Shift, no key |
+| | `src/extract_tickers.py`, `src/ticker_universe.py` | Python import | Find stock tickers in text; the list of listed symbols |
 | 19 Intrinsic-Value-Monitor | notebooks `0-create_list`, `1-produce_data`, `2-backtest` | Jupyter | Graham intrinsic-value backtest |
 | 21 lore-builder | `tools/build_index.py`, `search.py`, `check_pass.py` | `python3 -I tools/search.py "<q>"`; `--root` takes any lore folder | Index, search and check a lore bible |
 | | skills `lore-setup`, `lore-build`, `lore-check`, `lore-pass` | inside the kit | Start, grow, audit and apply a lore bible |
-| 22 tavern | `scripts/phone.sh`, `bundle.sh` | `scripts/phone.sh` | Build the Tavern app; run its iOS app in the Simulator |
+| 22 tavern | `scripts/phone.sh`, `bundle.sh` | `scripts/phone.sh` | Build the Tavern app; run its iOS app in the Simulator. `phone.sh` needs `xcodegen`, which is not installed |
 | | `bridge/tavern-durable` | `./setup.sh; ./run.sh <agent>` | Host one durable agent session on a local port |
+| | `scripts/capture.swift` | `swift scripts/capture.swift <pid> <window-id> <out.png>` | Screenshot one Mac window |
 | 23 moff | `moff` | not installed | Microsoft 365 from the command line through a signed-in Safari tab; also an MCP server |
 | 24 Satellite_Stock_Predictor | `fetch_prices.py` | `python fetch_prices.py [TICKERS] --start D` | Daily closes from Massive |
 | | `label_tanks.py`, `measure_tanks.py` | `python <file>` | Measure oil tank fill from satellite images |
 | 25 firstmate | firstmate | start an agent with this folder as its working directory | One agent that runs a crew of agents in worktrees; about 250 `bin/fm-*` scripts and 30 skills of its own |
 | | `bin/fm-mail.sh`, `bin/fm-lavish-url.sh` | `bin/fm-mail.sh read`; `bin/fm-lavish-url.sh snapshot <url>` | Mail client; web page review snapshot |
-| 26 comfyui | ComfyUI server | `.venv/bin/python main.py --port 8188` | Node-based image generation with an HTTP API; started by hand |
+| 26 comfyui | ComfyUI server | `.venv/bin/python main.py --port 8188` | Image generation with an HTTP API; started by hand. Models: Qwen-Image 2512 (new image) and Qwen-Image-Edit 2511 with a 4-step LoRA; nothing for upscale, control or video |
 | 28 NerdoDivergent | `bin/pebbl-check` | Stop hook | Holds a session that changed files without a pebbl entry |
-| 29 proxy-pipeline | `pipeline` | `uv run pipeline <doctor\|cards\|theme\|paper-art\|cutout\|compose\|board\|studio> ...` | Layered Magic proxy card pipeline, sketch to print |
+| 29 proxy-pipeline | `pipeline` | `uv run pipeline <module> <command> --theme T --deck D` | Layered Magic proxy card pipeline. Modules: `doctor`, `cards`, `theme`, `paper-art` (sketch, owner's pick, paint), `cutout` (background removal and matte), `compose` (layout, text, upscale, print finish), `frames`, `plating`, `plate-lab`, `board`, `studio` |
 | | `scripts/qwen_edit.py` | `.venv/bin/python scripts/qwen_edit.py --image1 a.png --prompt "..." --out out.png` | One Qwen image edit through a running ComfyUI |
 | 31 fairland-rv-census | `scripts/stac_inventory.py` | `uv run python scripts/stac_inventory.py` | Lists aerial and satellite scenes over an area, no key |
 | 32 loom | `loom` | — | Frozen 2026-11-09; do not run |
 | 33 lumr | `ytscript` | `uv run --project "P/33 lumr/ytscript" ytscript <url-or-id> [--timestamps --no-handoff]` | YouTube transcript saved as a file and a pebbl handoff |
-| | `hammy` | `uv run --project "P/33 lumr/hammy" hammy <file>` | Transcribe a recording into notes: summary, takeaways, actions |
+| | `hammy` | `uv run --project "P/33 lumr/hammy" hammy <file>` | Transcribe a recording into notes: summary, takeaways, actions; needs `hammy setup` once, not done on this Mac |
 | | `clipforge` | `uv run --project "P/33 lumr/clipforge" clipforge <file-or-url> [--num-clips 3]` | Long video into vertical shorts: highlights, reframe, subtitles |
 | | `bookforge` | `python3 -m bookforge.forge manuscript.md`; skill in `bookforge/skill` | Book and script writing with search over transcripts; its skill still points at `/Users/ashley` paths |
 | | `anti-ai-writing/anti_ai_checker.py` | `python3 anti_ai_checker.py` | The checker behind the `anti-ai-writing` skill |
 | | `youtube-narrative-guide/`, `shortform-narrative-guide/` | read | Narrative frameworks for scripts and shorts |
+| | `clipforge publish`, `clipforge youtube` | `uv run --project "P/33 lumr/clipforge" clipforge publish prepare\|check\|frames\|compose\|push` | Title, description, chapters, tags and thumbnail for a video; `push` goes live only with `--apply`. The YouTube login is not set up on this Mac |
+| | `dataforge` | Python import (`sources/youtube.py`, `sources/youtube_transcript.py`) | YouTube analytics and comments; transcripts without a key |
+| | `security-check.sh` | `bash security-check.sh` | Read-only audit of agent settings and editor startup files after a package scare |
+| | lumr-studio extras | set `LUMR_STUDIO_EXTRAS=publish_kit,overlays` | Adds overlays and a publish kit to the plugin; off by default |
 | 34 pebbl | `ops/check-memory-health.sh` | `bash ops/check-memory-health.sh` | Checks and repairs pebbl stores |
 | 35 local-models | `MODELS.md` | read | Installed models and which one for what |
 | | Unlimited OCR 2 | run line in `MODELS.md` | Document OCR with block positions |
@@ -126,17 +180,23 @@ Apps with no command of their own: Upscayl (image upscale, used by the card prin
 | | `bin/drive` | `bin/drive ls\|find\|text <file>` | Read-only Google Drive through `rclone`; converts files to text |
 | | `bin/ocr.swift` | `swift bin/ocr.swift page.png` | Text from an image with macOS Vision |
 | 37 snap-vocab | `spike/run.ts`, `server/index.ts` | `npm run spike`, `npm run dev` | Photo to vocabulary card (paid APIs) |
+| | `spike/fetch-photos.mjs` | `node spike/fetch-photos.mjs` | Photos from Wikimedia Commons, no key |
+| 38 life-management | `print.sh` | `"00-09 System/01 Tools/01.01 Print to PDF/print.sh" "<Plan.md>"` | A plan's text as a letter-size PDF through headless Brave |
 | 39 house-hunt | `scripts/build_pdf.py`, `build_tour_pdf.py`, `build_review.py` | `scripts/.venv/bin/python scripts/build_pdf.py` | House shortlist reports as PDF; `scripts/.venv` is not built on this Mac, so install `scripts/requirements.txt` into it first |
+| 40 essay-check | `eval/detector/score.py` | `.venv/bin/python -I score.py` in `eval/detector/` | Local score for how machine-written a text reads; ranks, gives no verdict |
+| | `server/extract/docx.ts`, `pdf.ts`; `eval/scripts/print_pdf.js` | imports; `node print_pdf.js <playwright dir> in.html out.pdf` | Text from Word and PDF files, flagging hidden text; HTML to PDF |
 | 41 army-builder | `fetch-core-rules`, `fetch-stratagems`, `fetch-datasheets`, `fetch-meta` | `npm run <name>` | Warhammer rules, stratagems, datasheets and tournament stats |
 | | `ocr-codex` | `npm run ocr-codex -- <pdf>` | OCR of codex photos with macOS Vision and deskew |
 | | `icons`, `portraits` | `npm run icons` | Unit art into web masks and images |
 | | `scripts/studio-public-url.sh`, `deploy-studio.sh` | `scripts/studio-public-url.sh [--rotate\|--off]` | Deploy DropList and publish its link |
+| | `audit`, `merge-rules`, `new-codex`, `fetch-data`, `import-data` | `npm run <name>` | Rules-data scorecard; re-apply hand-written rules; import a new codex; fetch and normalise army data |
 | 42 real-voice | speak app | `uv run python -m speak.app` in `prototype/` | Local text to speech at `127.0.0.1:8840`; can feed a virtual mic |
 | | `likeness/add_voice.py` | `uv run python likeness/add_voice.py me <recording.m4a> --mine` | Clone a voice from about 90 seconds of audio |
+| | `likeness/score.py`, `refine_voice.py` | `uv run python likeness/score.py` in `prototype/` | Score how closely a cloned voice matches, and how clear its words are |
 | 43 color-builder | `scripts/build-paints.mjs` | `npm run paints` | Paint tables into the app's data file |
 | 44 learn-later | `learn.py` | `learn` | The learning queue; Friday digest by launchd |
 
-No tools: 14, 20 (empty), 30 (reports only), 38, 40 (app code only).
+No tools: 14, 20 (empty), 30 (reports only). Dead scripts, written for another machine: `P/15 LSTM_AI_Stock_Predictor/run_sp500_sweep.sh`, `P/33 lumr/clipforge/render_shorts.py`, and the launchd file in `P/33 lumr/clipforge/launchd/`.
 
 ## Scheduled jobs (launchd)
 
