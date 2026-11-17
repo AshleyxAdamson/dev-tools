@@ -17,7 +17,7 @@ there is never a live copy quietly drifting from a repo copy.
 Nothing here is copied into place. These paths point at this repo:
 
 ```
-~/.claude/skills/<name>   ->  dev-tools/skills/<name>      (8 skills)
+~/.claude/skills/<name>   ->  dev-tools/skills/<name>      (7 skills)
 ~/.claude/statusline.sh   ->  dev-tools/statusline/statusline.sh
 ```
 
