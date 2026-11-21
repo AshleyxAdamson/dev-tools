@@ -103,6 +103,7 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | Store | Put in with | Find with | State |
 |---|---|---|---|
 | Learning queue | `learn add` | `learn list`; Friday digest | Works from any folder; links only |
+| Life notes | a numbered note in `P/38 life-management`, in the area it is about; its `AGENTS.md` has the format | the index in its `README.md` | Works; one note per thing read or watched (health, career, business) |
 | pebbl, per repo | `pebbl log`, `pebbl handoff` | `pebbl search`, `pebbl context` | Works; one-line decisions, not documents |
 | Claude memory, per project | the agent writes files under `~/.claude/projects/<project>/memory/` | Loaded each session | Works; `import-memory` and `consolidate-memory` skills manage it |
 | Park logs and meetings | `bin/park` in `P/36` | `park status`, `park todo` | Works; parks only |
