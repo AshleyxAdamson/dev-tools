@@ -18,7 +18,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `research-planner` | `~/dev-tools/skills` | Multi-phase research with checked citations. Inside it: `render_pdf.py` (a folder of numbered Markdown files into one designed PDF: `DYLD_FALLBACK_LIBRARY_PATH=$(brew --prefix)/lib uv run --with weasyprint --with markdown python ~/.claude/skills/research-planner/render_pdf.py --dir "<folder>" --title "..." [--theme care\|default --out FILE --no-open]`), `verify-citations.md` (fresh agents re-check every source), `packaging.md` (report skeleton and folder rules). It makes no slide decks |
 | `skill-builder` | `~/dev-tools/skills` | Build or audit a skill |
 | `video-grab` | `~/dev-tools/skills` | Screens, transcript and file from a YouTube video. `scripts/grab.py search "<query>"`, `fetch <url> --out <dir>`, `at <video-folder> <times>` (exact frames from a video already fetched) |
-| `learn-later`, `socratic-tutor` | `P/44 learn-later/skills` | Learning queue; structured tutoring |
+| `learn-later`, `socratic-tutor` | `P/38 life-management/00-09 System/01 Tools/01.02 Learn later/skills` | Learning queue; structured tutoring |
 | `ship`, `state`, `longrun`, `checkup` | `~/.claude/skills` | Land work on main; show leftovers; long runs; weekly pipeline repair |
 | `secure-public-url` | `~/.claude/skills` | Publish a local service through Tailscale Funnel, sandboxed |
 | `grilling` (`grill-me` calls it), `tdd`, `pr`, `retro`, `show-me`, `writing-for-agents` | `~/.claude/skills` | Interview a plan; test-first work; PR body; retrospective; visual explainer; docs for agents |
@@ -40,7 +40,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | Command | Does | State |
 |---|---|---|
 | `pebbl` | Project memory: decisions, handoffs, search | Runs the `~/factory/pebbl` clone; source in `P/34 pebbl` |
-| `learn` | Learning queue (`add`, `list`, `done`, `friday`) | Runs `P/44 learn-later/learn.py` |
+| `learn` | Learning queue (`add`, `list`, `done`, `friday`) | Runs `P/38 life-management/00-09 System/01 Tools/01.02 Learn later/learn.py` |
 | `hammy` | A recording into a transcript and notes: `hammy <file> [--output DIR --llm claude_code\|ollama\|none --word-timestamps]` | Runs `P/33 lumr/hammy` with its Mac models; notes go to `~/Lumr/hammy/stash` unless `--output` is given |
 | `yt-dlp` | Download video, audio or captions | Ready |
 | `mlx_whisper` | Local speech to text | Ready |
@@ -214,6 +214,7 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | 37 snap-vocab | `spike/run.ts`, `server/index.ts` | `npm run spike`, `npm run dev` | Photo to vocabulary card (paid APIs) |
 | | `spike/fetch-photos.mjs` | `node spike/fetch-photos.mjs` | Photos from Wikimedia Commons, no key |
 | 38 life-management | `print.sh` | `"00-09 System/01 Tools/01.01 Print to PDF/print.sh" "<Plan.md>"` | A plan's text as a letter-size PDF through headless Brave |
+| | `00-09 System/01 Tools/01.02 Learn later/learn.py` | `learn` | The learning queue; Friday digest by launchd. Was project 44 |
 | 39 house-hunt | `scripts/build_pdf.py`, `build_tour_pdf.py`, `build_review.py` | `scripts/.venv/bin/python scripts/build_pdf.py` | House shortlist reports as PDF; `scripts/.venv` is not built on this Mac, so install `scripts/requirements.txt` into it first |
 | 40 essay-check | `eval/detector/score.py` | `.venv/bin/python -I score.py` in `eval/detector/` | Scores every essay in the eval corpus with a local AI-text detector; ranks, gives no verdict. `detector_lib.py` holds the model |
 | | `server/extract/docx.ts`, `pdf.ts`; `eval/scripts/print_pdf.js` | imports; `node print_pdf.js <playwright dir> in.html out.pdf` | Text from Word and PDF files, flagging hidden text; HTML to PDF |
@@ -226,7 +227,6 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | | `likeness/add_voice.py` | `uv run python likeness/add_voice.py me <recording.m4a> --mine` | Clone a voice from about 90 seconds of audio |
 | | `likeness/score.py`, `refine_voice.py` | `uv run python likeness/score.py` in `prototype/` | Score how closely a cloned voice matches and how clear its words are; find the best part of a long recording to clone from |
 | 43 color-builder | `scripts/build-paints.mjs` | `npm run paints` | Paint tables into the app's data file |
-| 44 learn-later | `learn.py` | `learn` | The learning queue; Friday digest by launchd |
 
 No tools: 14, 20 (empty), 30 (reports only). Dead scripts, written for another machine: `P/15 LSTM_AI_Stock_Predictor/run_sp500_sweep.sh`, `P/33 lumr/clipforge/render_shorts.py`, and the launchd file in `P/33 lumr/clipforge/launchd/`.
 

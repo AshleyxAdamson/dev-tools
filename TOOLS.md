@@ -119,6 +119,7 @@ There is no general store where a note or a document goes in and is found later.
 | What | Tool |
 |---|---|
 | A link to learn from later | `learn add "<link> <why>"`, or the `learn-later` skill |
+| A note on something read or watched once (health, career, business) | A numbered note in 38 life-management, in the area it is about; its `AGENTS.md` has the format |
 | A decision, a dead end or a handoff in a project | `pebbl log`, `pebbl handoff`; find it with `pebbl search` |
 | A standing fact about the owner or how to work | The Claude memory files for that project |
 | Park notes, meetings and recordings | `bin/park log`, `meeting new`, `transcribe` in 36 |
