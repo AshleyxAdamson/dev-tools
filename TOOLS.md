@@ -106,7 +106,7 @@ Loom 3 is the owner's pipeline; its source is `~/factory/agentbox` (`LOOM3.md`).
 
 | Need | Tool |
 |---|---|
-| Land finished work on main | `/ship`, the only door. The `loom` queue (32) and the `loom-work` and `loom-refine` skills are frozen; firstmate's merge flow is not used for the owner's repos |
+| Land finished work on main | `/ship`, the only door. "Loom" means Loom 3. The old `loom` queue (32) is retired and its skills are gone; firstmate's merge flow is not used for the owner's repos |
 | A command was blocked | That is the guard hook on every shell command and file write. It stops pushes and PRs the owner didn't ask for, destructive git and delete commands, admin commands and reads of key files. Don't route around it: write the friction line from the global instructions and carry on |
 | A change inside `~/factory/agentbox` | `make test` there before `/ship` |
 | A public link to something running locally | `secure-public-url` skill; `scripts/studio-public-url.sh` in 41 is for DropList only |

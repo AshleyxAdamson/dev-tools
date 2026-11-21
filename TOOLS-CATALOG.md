@@ -96,7 +96,7 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | tests | `make test` in `~/factory/agentbox` | Guard, ship, install and longrun tests; `tests/codex_live_test.sh` is separate and costs money |
 | Remote Control lobby | `ops/lobby-up.sh`, launchd `com.agentbox.lobby` | Keeps a tmux session ready so phone sessions start in the Projects folder |
 | health, notify | `ops/health.sh`, `ops/notify.sh` | Host checks every 5 minutes; Telegram notices, which are not configured, so messages pile up in `notify-undelivered.log` |
-| frozen | `P/32 loom`; skills `loom-work`, `loom-refine` in `~/dev-tools/skills` | The old queue, stopped 2026-11-09 |
+| retired | `P/32 loom` | The old queue, stopped 2026-11-09; never run it. Its `loom-work` and `loom-refine` skills were deleted 2026-11-16 |
 
 ## Where notes and documents are kept
 
@@ -123,7 +123,6 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | | `bin/obsidian-theme.sh` | `~/dev-tools/bin/obsidian-theme.sh [--install\|--pull]` | Compares the Obsidian theme in the repo with the vault's copy; copies one over the other |
 | | `bin/agent-deck-fix-session-paths.sh` | — | One-off repoint of agent-deck sessions from `/Users/ashley`; agent-deck is not installed here |
 | | `statusline/statusline.sh` | — | The Claude Code status line; not linked into `~/.claude` or set in its settings on this Mac |
-| | skills `loom-work`, `loom-refine` | — | Frozen with the loom queue; not linked into `~/.claude/skills` |
 | | `bin/cutout.swift` | `swift ~/dev-tools/bin/cutout.swift <image> <out.png> [--mask \| --crop]` | Remove the background from any image with macOS Vision; local, about a second |
 | `~/factory/agentbox` | `claude/hooks/guard.sh` | runs on every Bash, Write and Edit | The guard: blocks unasked PRs, `git add -A` and the like |
 | | `ops/health.sh`, `lobby-up.sh`, `maintenance.sh`, `notify.sh`, `lock-screen.sh` | run by launchd | Host health, Remote Control lobby, weekly updates, Telegram notice, screen lock |

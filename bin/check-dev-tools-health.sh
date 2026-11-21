@@ -20,7 +20,7 @@ set -uo pipefail
 
 REPO="/Users/ashley/dev-tools"
 PEBBL="/Users/ashley/pebbl/bin/pebbl.js"
-SKILLS="activity-check anti-ai-prose design-spike flare-strategy loom-refine loom-work research-planner skill-builder video-grab"
+SKILLS="activity-check anti-ai-prose design-spike flare-strategy research-planner skill-builder video-grab"
 
 JSON=0; REPAIR=1; FIX_LOCATION=0
 for a in "$@"; do

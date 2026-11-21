@@ -10,7 +10,7 @@ there is never a live copy quietly drifting from a repo copy.
 |---|---|
 | `TOOLS.md` | Which tool for which job, across every repo. `~/.claude/CLAUDE.md` imports it, so every agent session reads it. |
 | `TOOLS-CATALOG.md` | Every tool on this Mac by where it lives, with how to run it. Agents read it on demand. |
-| `skills/` | The nine Claude Code skills I authored. |
+| `skills/` | The eight Claude Code skills I authored. |
 | `statusline/` | The Claude Code status line I use, with its full history. |
 | `bin/` | Health checks for this repo's symlinks, the Johnny Decimal name checker, the Obsidian tag checker, and `cutout.swift`, which removes the background from any image. |
 
@@ -19,7 +19,7 @@ there is never a live copy quietly drifting from a repo copy.
 Nothing here is copied into place. These paths point at this repo:
 
 ```
-~/.claude/skills/<name>   ->  dev-tools/skills/<name>      (9 skills)
+~/.claude/skills/<name>   ->  dev-tools/skills/<name>      (8 skills)
 ~/.claude/statusline.sh   ->  dev-tools/statusline/statusline.sh
 ```
 
@@ -83,7 +83,7 @@ tracked paths, so a tracked `events.jsonl` can no longer be pushed back onto the
 ## Not failing silently
 
 `bin/check-dev-tools-health.sh` verifies and repairs what this repo still owns:
-the nine skill symlinks, the statusline symlink, and the TCC constraint on where
+the eight skill symlinks, the statusline symlink, and the TCC constraint on where
 the repo may live. pebbl's own pipeline has its own check, its own fault-injection
 harness, and its own liveness heartbeat — `cd ~/pebbl && bash ops/check-memory-health.sh`.
 
@@ -106,8 +106,6 @@ harness, and its own liveness heartbeat — `cd ~/pebbl && bash ops/check-memory
 | `anti-ai-prose` | Makes writing sound like me instead of like AI. `RULES.md` is the canonical list; `anti_ai_checker.py` validates |
 | `design-spike` | Fans out several distinct UI directions as openable HTML mockups on real data, critiques them adversarially (scored, attacked, not praised), then recommends a base plus grafts |
 | `flare-strategy` | Consultant on FLARE forward-looking active-retrieval strategy for an agent, and generates the prompt scaffold |
-| `loom-refine` | Self-paced loop that refines the loom factory itself |
-| `loom-work` | Works the loom queue as an interactive line worker |
 | `research-planner` | Six-phase research protocol — find the hinge, red-team the plan, tier the subagents, grade the evidence |
 | `skill-builder` | Builds a new skill, or audits and shrinks an existing one |
 | `video-grab` | Pulls timed screens, the transcript and the video file from YouTube videos into a folder an agent can read, for studying a product from its demo videos |
@@ -125,9 +123,9 @@ them here would fork them by accident.
 
 ## Related, deliberately elsewhere
 
-- **Loom UI** — `~/loom/floor/loom-tui`. Stays in loom, versioned alongside
-  the factory it drives. Pulling it here would either cut its history out of
-  loom or leave two copies.
+- **Loom 3** — `~/factory/agentbox`: the `/ship`, `/state`, `/longrun` and
+  `/checkup` skills, the guard and the global CLAUDE.md. "Loom" means Loom 3;
+  the old loom at `~/loom` and its `loom-work`/`loom-refine` skills are retired.
 - **claude-theme** — its own repo in `10.Code-Projects`. Generates terminal
   themes; fold it in here if it ever needs to be.
 - **pebbl** — `~/pebbl`, pushed to
