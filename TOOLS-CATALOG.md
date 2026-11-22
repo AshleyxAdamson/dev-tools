@@ -2,7 +2,7 @@
 
 For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.md` says which one to pick when several fit; this file says what exists and how to run it. Read it before writing a new script for a job that may already be solved.
 
-`P/` is `~/Documents/Code/10-19 Projects/`. "Anywhere" means on PATH, a skill in `~/.claude/skills`, an enabled plugin, or a registered MCP server. "Folder" means run it from its project folder with the command shown. Last swept 2026-11-16.
+`P/` is `~/Documents/Code/10-19 Projects/`. "50/<repo>" is a repo inside `P/50 losing-loonies`, which holds every LosingLoonies repo. "Anywhere" means on PATH, a skill in `~/.claude/skills`, an enabled plugin, or a registered MCP server. "Folder" means run it from its project folder with the command shown. Last swept 2026-11-16.
 
 ## Usable anywhere
 
