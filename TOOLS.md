@@ -4,7 +4,7 @@ For agents. `~/.claude/CLAUDE.md` imports this file, so it is in every Claude Co
 
 This file holds the jobs where more than one tool fits. Every tool found on this Mac, repo by repo, with its path and how to run it, is in `~/dev-tools/TOOLS-CATALOG.md`: read that when a job isn't here, before you write a new script for it.
 
-A number like "33 lumr" is a folder under `~/Documents/Code/10-19 Projects/`. "Run from its folder" means the tool is not on PATH: the catalog has the command.
+A number like "33 lumr" is a folder under `~/Documents/Code/10-19 Projects/`. "50/<repo>" is a repo inside `50 losing-loonies`, which holds every LosingLoonies repo. "Run from its folder" means the tool is not on PATH: the catalog has the command.
 
 **Keeping it true:** a new tool gets its catalog row in the same change; if it overlaps a job here it gets a row here too, and its own description names the sibling to use instead. Edit both files in `~/dev-tools` and land them with `/ship`.
 
@@ -137,8 +137,8 @@ There is no general store where a note or a document goes in and is found later.
 | A slide deck | The Slides artifact type in the Claude app; the `pptx` skill only when a PowerPoint file is asked for |
 | A Word, PowerPoint, Excel or PDF file | the `docx`, `pptx`, `xlsx` and `pdf` skills. LibreOffice and their Python and Node libraries are not installed on this Mac, so their build and check scripts will not run as they stand: say so before promising one |
 | A chart | Read the `dataviz` skill first, then an Artifact or the chart tool |
-| An animated chart as a video with sound | `source_code/lib/animation.py` in 16 |
-| Sound effects made without samples | `audio_engine` in 16 |
+| An animated chart as a video with sound | `source_code/lib/animation.py` in 50/congress-trading-investigation |
+| Sound effects made without samples | `audio_engine` in 50/congress-trading-investigation |
 | A screenshot of one Mac window | `scripts/capture.swift` in 22 tavern |
 | A rendered web page copied into Paper as layers | `to-paper.mjs` in 12 portfolio (`tools/explorer-reel`) |
 
@@ -171,10 +171,10 @@ All in 33 lumr, run from its folder (commands in the catalog). The YouTube login
 | Need | Tool |
 |---|---|
 | Magic cards, rulings, deck checks | mtg-cards MCP. The `mtg` command in 11 is the same code; 13 holds a copy: don't add a third |
-| Stock prices and financials | The Massive wrapper `glassdoor_stock/massive.py` in 17 (pages and retries on 429). 16 (`source_code/lib/data_massive.py`) and 24 (`fetch_prices.py`) have their own Massive clients: reuse one, don't write a fourth |
-| Congress trades | `source_code/lib/data_quiver.py` in 16 (paid Quiver key) |
-| Whether a backtest result is real | `run_significance.py` and `research/gate.py` in 15, before believing any strategy claim |
-| Insider buys from SEC filings | `TrainingData/featuresPy/insiderbuying.py` in 15 (no key) |
-| Stock tickers mentioned in text | `src/extract_tickers.py` in 18 |
-| Reddit history | `src/fetch_wsb_arctic_shift.py` in 18 (no key) |
+| Stock prices and financials | The Massive wrapper `glassdoor_stock/massive.py` in 50/Glassdoor-AI-Stock-Trader (pages and retries on 429). 50/congress-trading-investigation (`source_code/lib/data_massive.py`) and 50/Satellite_Stock_Predictor (`fetch_prices.py`) have their own Massive clients: reuse one, don't write a fourth |
+| Congress trades | `source_code/lib/data_quiver.py` in 50/congress-trading-investigation (paid Quiver key) |
+| Whether a backtest result is real | `run_significance.py` and `research/gate.py` in 50/LSTM_AI_Stock_Predictor, before believing any strategy claim |
+| Insider buys from SEC filings | `TrainingData/featuresPy/insiderbuying.py` in 50/LSTM_AI_Stock_Predictor (no key) |
+| Stock tickers mentioned in text | `src/extract_tickers.py` in 50/WallStreetBets-Stock-Bot |
+| Reddit history | `src/fetch_wsb_arctic_shift.py` in 50/WallStreetBets-Stock-Bot (no key) |
 | Warhammer core rules, stratagems, datasheets | the `npm run fetch-*` scripts in 41 army-builder |

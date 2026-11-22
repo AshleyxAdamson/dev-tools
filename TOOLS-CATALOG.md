@@ -152,26 +152,26 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | | `tools/breakout_scalpel.py` (same theme) | `clip --segment vision` | Cut a subject out and lay it over the frame; macOS Vision is the free option |
 | | `tools/tag_images.py`, `search.py`, `find_refs.py`, `print_prep.py` (same theme) | run from the theme folder | Tag reference images; search bible and images by meaning (local embeddings); find reference images; print files at 800 dpi with bleed |
 | | `tools/paper_mcp.py` (same theme) | Python import | A plain client for Paper's server, so a script can write to Paper |
-| 15 LSTM_AI_Stock_Predictor | `run_live_signals.py`, `run_backtest_v4.py`, `research/evaluate.py` | `python <file>` | Stock forecaster and its sealed-holdout evaluation |
+| 50 losing-loonies/LSTM_AI_Stock_Predictor | `run_live_signals.py`, `run_backtest_v4.py`, `research/evaluate.py` | `python <file>` | Stock forecaster and its sealed-holdout evaluation |
 | | `run_significance.py`, `research/gate.py`, `research/score_holdout.py` | `python <file>` | Whether a result beats seed noise; accept or reject with a penalty for the number of tries; a once-only holdout score |
 | | `TrainingData/featuresPy/insiderbuying.py` | `python insiderbuying.py` | Insider buys from SEC Form 4 filings, no key |
 | | `TrainingData/sp500/download_sp500.py` | `python download_sp500.py` | S&P 500 prices by date including delisted names (Massive key) |
-| 16 congress-trading-investigation | `audio_engine` | `from audio_engine import Cue, render_track` | Synthesised sound effects and track mixing, no samples |
+| 50 losing-loonies/congress-trading-investigation | `audio_engine` | `from audio_engine import Cue, render_track` | Synthesised sound effects and track mixing, no samples |
 | | `source_code/lib/data_quiver.py`, `source_code/show_trades.py` | `python source_code/show_trades.py [--all] [--csv f]` | Congress trades from Quiver (paid key) |
 | | `source_code/lib/animation.py` | `animate_lines`, `animate_bars`, `save_animation(..., audio_wav=)` | Animated charts as video with the sound mixed in |
 | | `source_code/lib/backtest.py`, `source_code/prefetch_data.py` | Python import; `python source_code/prefetch_data.py` | Follow-the-filing backtest; cache all the trade and price data |
-| 17 Glassdoor-AI-Stock-Trader | `glassdoor_stock/massive.py`, `prices.py` | Python import | Prices and financials from Massive, with paging and retry |
+| 50 losing-loonies/Glassdoor-AI-Stock-Trader | `glassdoor_stock/massive.py`, `prices.py` | Python import | Prices and financials from Massive, with paging and retry |
 | | `download_glassdoor_dataset.py` | `python download_glassdoor_dataset.py` | Kaggle review dataset (Kaggle login) |
-| 18 WallStreetBets-Stock-Bot | `src/fetch_wsb_arctic_shift.py` | `python -m src.fetch_wsb_arctic_shift --start D --end D --out f.parquet` | Subreddit history through Arctic Shift, no key |
+| 50 losing-loonies/WallStreetBets-Stock-Bot | `src/fetch_wsb_arctic_shift.py` | `python -m src.fetch_wsb_arctic_shift --start D --end D --out f.parquet` | Subreddit history through Arctic Shift, no key |
 | | `src/extract_tickers.py`, `src/ticker_universe.py` | Python import | Find stock tickers in text; the list of listed symbols |
-| 19 Intrinsic-Value-Monitor | notebooks `0-create_list`, `1-produce_data`, `2-backtest` | Jupyter | Graham intrinsic-value backtest |
+| 50 losing-loonies/Intrinsic-Value-Monitor | notebooks `0-create_list`, `1-produce_data`, `2-backtest` | Jupyter | Graham intrinsic-value backtest |
 | 21 lore-builder | `tools/build_index.py`, `search.py`, `check_pass.py` | `python3 -I tools/search.py "<q>"`; `--root` takes any lore folder | Index, search and check a lore bible |
 | | skills `lore-setup`, `lore-build`, `lore-check`, `lore-pass` | inside the kit | Start, grow, audit and apply a lore bible |
 | 22 tavern | `scripts/phone.sh`, `bundle.sh` | `scripts/phone.sh` | Build the Tavern app; run its iOS app in the Simulator. `phone.sh` needs `xcodegen`, which is not installed |
 | | `bridge/tavern-durable` | `./setup.sh; ./run.sh <agent>` | Host one durable agent session on a local port |
 | | `scripts/capture.swift` | `swift scripts/capture.swift <pid> <window-id> <out.png>` | Screenshot one Mac window |
 | 23 moff | `moff` | not installed | Microsoft 365 from the command line through a signed-in Safari tab; also an MCP server |
-| 24 Satellite_Stock_Predictor | `fetch_prices.py` | `python fetch_prices.py [TICKERS] --start D` | Daily closes from Massive |
+| 50 losing-loonies/Satellite_Stock_Predictor | `fetch_prices.py` | `python fetch_prices.py [TICKERS] --start D` | Daily closes from Massive |
 | | `label_tanks.py`, `measure_tanks.py` | `python <file>` | Measure oil tank fill from satellite images |
 | 25 firstmate | firstmate | start an agent with this folder as its working directory | One agent that runs a crew of agents in worktrees; about 250 `bin/fm-*` scripts and 30 skills of its own |
 | | `bin/fm-mail.sh`, `bin/fm-lavish-url.sh` | `bin/fm-mail.sh read`; `bin/fm-lavish-url.sh snapshot <url>` | Mail client; web page review snapshot |
@@ -228,7 +228,7 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | | `likeness/score.py`, `refine_voice.py` | `uv run python likeness/score.py` in `prototype/` | Score how closely a cloned voice matches and how clear its words are; find the best part of a long recording to clone from |
 | 43 color-builder | `scripts/build-paints.mjs` | `npm run paints` | Paint tables into the app's data file |
 
-No tools: 14, 20 (empty), 30 (reports only). Dead scripts, written for another machine: `P/15 LSTM_AI_Stock_Predictor/run_sp500_sweep.sh`, `P/33 lumr/clipforge/render_shorts.py`, and the launchd file in `P/33 lumr/clipforge/launchd/`.
+No tools: 50/Astrology-Stock-Bot and 50/Copying-DJT-Trades (empty, gone from GitHub), 30 (reports only). Not yet swept: 50/Student-Loan-vs-Investing, 50/Recession-Investing-Experiment, 50/Best-MACD-Trading-Validation, 50/Truth-Social-Trading. Dead scripts, written for another machine: `P/50 losing-loonies/LSTM_AI_Stock_Predictor/run_sp500_sweep.sh`, `P/33 lumr/clipforge/render_shorts.py`, and the launchd file in `P/33 lumr/clipforge/launchd/`.
 
 ## Scheduled jobs (launchd)
 
