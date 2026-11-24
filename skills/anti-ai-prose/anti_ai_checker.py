@@ -89,6 +89,14 @@ SERVES_AS_PATTERNS = [
     r"\bserves as\b", r"\bstands as\b", r"\bmarks a\b", r"\brepresents a\b",
 ]
 
+LISTING_COPY_PATTERNS = [
+    r"\bif this sounds right\b",
+    r"\bhappy to answer questions\b",
+    r"\bmessage me for (?:rental )?availability\b",
+    r"\b(?:a|an) (?:quieter|simpler|straightforward) alternative to\b",
+    r"\bmore permanent than a holiday rental\b",
+]
+
 
 # ---------------------------------------------------------------------------
 # Core checker
@@ -283,6 +291,11 @@ def check_passage(text: str) -> dict:
 
     if re.search(r"(?:you'?re valid|remember (?:that )?you matter|your feelings are valid)", text_lower):
         flags.append(("tone", "generic encouragement without specificity"))
+
+    for pattern in LISTING_COPY_PATTERNS:
+        if re.search(pattern, text_lower):
+            flags.append(("tone", "canned property-listing copy"))
+            break
 
     # --- Score ---
     score = len(flags)

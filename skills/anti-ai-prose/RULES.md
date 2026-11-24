@@ -93,6 +93,15 @@ script catches.
 - False vulnerability: "And honestly?" / "I'll be the first to admit..."
 - Generic encouragement: "You're valid!" with nothing specific behind it.
   `[checker]`
+- **Featureless sales copy.** A listing made of soft adjectives, a generic promise,
+  and a generic invitation has no owner behind it. Name the owner, one concrete
+  fact, and the actual arrangement instead.
+- **False comparison frame in ads.** “An alternative to a villa” and “more than a
+  holiday rental” borrow a contrast instead of explaining the offer. State the
+  offer plainly. `[checker]`
+- **Canned listing close.** “If this sounds right,” “happy to answer questions,”
+  and “message me for availability” read like copy-generator output. Ask for one
+  ordinary next step, and vary it across a batch of posts. `[checker]`
 - **Grading the work or worker.** "did honest work," "solid effort," "great
   job." Report what was done; let facts carry the grade.
 - **Self-narrated cleverness.** "the elegant part," "the beautiful thing here,"
