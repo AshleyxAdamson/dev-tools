@@ -94,6 +94,7 @@ LISTING_COPY_PATTERNS = [
     r"\bhappy to answer questions\b",
     r"\bmessage me for (?:rental )?availability\b",
     r"\b(?:a|an) (?:quieter|simpler|straightforward) alternative to\b",
+    r"\bmore than a holiday rental\b",
     r"\bmore permanent than a holiday rental\b",
 ]
 
