@@ -97,10 +97,10 @@ The catalog lists all 44 `mflux` commands by job. The weights already downloaded
 Before an email send, check this section first. Himalaya is the only sending route. A signed-in browser, mail app, or connector never selects the sender or substitutes for Himalaya.
 
 1. Resolve the sender from the owner's request or an explicit project convention. If neither establishes the address, ask which address to use. A recipient's address, the browser login, and the only configured account are each insufficient to choose the sender.
-2. Run `account list` for the relevant Himalaya configuration and confirm the exact `From` address. With Himalaya 2, `message compose` without `--send` or `--save` can print a draft locally for this check. Pass the selected `--account` when sending and check that the message's `From` and recipients match the request.
+2. Run `account list` for the relevant Himalaya configuration and verify which address belongs to the account using its configuration or project instructions. In Himalaya 2, pass `--account` and `--from` explicitly to `message compose`. Without `--send` or `--save`, it prints a local draft. Before sending, check the draft's `From` and recipients against the request, then use the same `--account` to send.
 3. Send only when the owner has authorized the message. If the intended sender cannot be verified or its account cannot send, stop and report the missing account or connection. Keep the draft for the intended sender.
 
-On the Studio, the verified Himalaya configuration is the `park` account through `bin/mail` inside `36 Mobile-Home-Parks`. See that project's `CLAUDE.md` for its address. The wrapper is for park mail. Plain `himalaya` has no default config here, and a personal or Nimbus sending route still needs to be verified before use.
+On the Studio, the verified Himalaya configuration is the `park` account through `bin/mail` inside `36 Mobile-Home-Parks`. See that project's `CLAUDE.md` for its address. The wrapper is for park mail and its account leaves `From` blank unless supplied. Plain `himalaya` has no default config here, and a personal or Nimbus sending route still needs to be verified before use.
 
 ## Language models and other agents
 
