@@ -50,7 +50,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 | `claude-local`, `claude-glm`, `claude-kimi` | Claude Code on Ollama, GLM, Kimi | From `~/factory/agentbox/bin`; on request only |
 | `codex`, `opencode` | Other agent runners | On request only |
 | `rclone` | Cloud files | Remotes `gdrive`, `park-drive` (Google Drive) |
-| `himalaya` | Mail from the command line | Works through `P/36 Mobile-Home-Parks/bin/mail`, which passes the park account's config; plain `himalaya` has no config file |
+| `himalaya` | Email and the sole sending route | Follow “Mail and files” in `TOOLS.md` for account and `From` verification. On the Studio, `P/36 Mobile-Home-Parks/bin/mail` supplies the park configuration. Plain `himalaya` has no default config. |
 | `ffmpeg`, `pdftotext` and `pdftoppm` (poppler), `jq`, `rg`, `fd`, `bat`, `tree`, `wget`, `shellcheck` | Media, PDF, search and shell helpers | Ready |
 | `gh` | GitHub | Signed in |
 | `tailscale` | Tailnet and Funnel | Active; use it through `secure-public-url` |
@@ -208,7 +208,7 @@ All 44, version 0.23.0. Output is `image.png` in the current folder unless `--ou
 | | skill `code-video` | start an agent inside `code-video-studio/` | Render a video from code to MP4, with checks and narration |
 | | Odysseus | `odysseus-app/build.sh`; server on `127.0.0.1:7860` | Self-hosted chat, notes, mail and calendar workspace; its Claude skill is not installed |
 | 36 Mobile-Home-Parks | `bin/park` | `bin/park status\|todo\|log\|meetings\|transcribe` | Park logs, profiles and meetings; `transcribe` wraps `mlx_whisper` |
-| | `bin/mail` | `bin/mail envelope list` | `himalaya` on the park mail account; can send |
+| | `bin/mail` | `bin/mail account list` | Himalaya wrapper for park mail. Select `--account park` and verify `From` before sending. |
 | | `bin/drive` | `bin/drive ls\|find\|text <file>` | Read-only Google Drive through `rclone`; converts files to text |
 | | `bin/ocr.swift` | `swift bin/ocr.swift page.png` | Text from an image with macOS Vision |
 | 37 snap-vocab | `spike/run.ts`, `server/index.ts` | `npm run spike`, `npm run dev` | Photo to vocabulary card (paid APIs) |
