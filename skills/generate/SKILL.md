@@ -7,7 +7,9 @@ description: Generate images and video through pay-as-you-go aggregators (kie.ai
 
 ## Image routing
 
-When the user says `90s anime`, requests a photo-to-anime edit, or follows up on an established 90s anime illustration, apply [1990s Anime Photo Illustration](../1990s-anime-photo-illustration/SKILL.md) before preparing the edit. If using this hosted generator, pass each source photo as `--ref` in a separate edit with `--n 1` by default. Apply the budget checks below to hosted calls.
+When the user says `90s anime`, requests a photo-to-anime edit, or follows up on an established 90s anime illustration, apply [1990s Anime Photo Illustration](../1990s-anime-photo-illustration/SKILL.md) before preparing the edit.
+
+For new hosted illustrations, pass each source photo as `--ref` in its own edit with `--n 1` by default. For corrections, pass the existing illustration selected by the skill as the edit target. Hosted local file references require `--provider fal`. Apply the budget checks below and keep the same `--out` directory across calls so they share the spend ledger.
 
 ## Cardinal rules
 

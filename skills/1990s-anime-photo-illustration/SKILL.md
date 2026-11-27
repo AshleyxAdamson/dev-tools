@@ -33,6 +33,6 @@ Keep the source framing by default. A tighter portrait crop can give faces more 
 
 ## Verify and revise
 
-Compare the output with the source. Check each person's likeness and expression, especially the nose, lips, eyes, facial silhouette, glasses, and facial hair. Check clothing, gestures, perspective, important objects, and readable text. Confirm the result is a single static frame with expressive character design and traditional cel shading.
+Compare the output with the source when available. Check each person's likeness and expression, especially the nose, lips, eyes, facial silhouette, glasses, and facial hair. Check clothing, gestures, perspective, important objects, and readable text. Confirm the result is a single static frame with expressive character design and traditional cel shading. Correct any important mismatches before delivering the finished image.
 
-For a correction, use the strongest existing illustration as the edit target. Use the photograph or the user's exact wording to guide the correction. Specify the precise change and lock the successful faces, expressions, rendering, and composition wherever they are outside the requested edit. Compare again with both the photograph and the chosen baseline to catch drift.
+For a correction, use the strongest existing illustration as the edit target. Use the photograph or the user's exact wording to guide the correction. Specify the precise change and lock the successful faces, expressions, rendering, and composition wherever they are outside the requested edit. Compare again with the chosen baseline and the photograph when available to catch drift.
