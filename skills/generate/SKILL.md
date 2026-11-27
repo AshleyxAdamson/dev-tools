@@ -1,9 +1,13 @@
 ---
 name: generate
-description: Generate images and video through pay-as-you-go aggregators (kie.ai, fal.ai, wavespeed) with hard budget caps and local prompt logging - a subscription-free Higgsfield alternative. Use when the user wants images, ads, product shots, video, or visual assets, says "/generate", or asks to make media without a monthly subscription.
+description: Generate images and video through pay-as-you-go aggregators (kie.ai, fal.ai, wavespeed) with hard budget caps and local prompt logging - a subscription-free Higgsfield alternative. Use when the user wants images, ads, product shots, video, or visual assets, says "/generate", or asks to make media without a monthly subscription. Routes "90s anime" and anime photo illustration requests to the dedicated skill.
 ---
 
 # generate
+
+## Image routing
+
+When the user says `90s anime`, requests a photo-to-anime edit, or follows up on an established 90s anime illustration, apply [1990s Anime Photo Illustration](../1990s-anime-photo-illustration/SKILL.md) before preparing the edit. If using this hosted generator, pass each source photo as `--ref` in a separate edit with `--n 1` by default. Apply the budget checks below to hosted calls.
 
 ## Cardinal rules
 

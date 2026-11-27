@@ -10,6 +10,7 @@ For agents. Every tool found on this Mac, by where it lives. `~/dev-tools/TOOLS.
 
 | Skill | Source | Does |
 |---|---|---|
+| `1990s-anime-photo-illustration` | `~/dev-tools/skills` | Say `90s anime` to turn a photo into a hand-drawn anime still that preserves likeness, composition, and visible details. Also handles targeted corrections |
 | `activity-check` | `~/dev-tools/skills` | Diagnose a hot, slow or draining Mac |
 | `anti-ai-prose` | `~/dev-tools/skills` | Draft or edit prose in Ashley's voice. `python3 ~/.claude/skills/anti-ai-prose/anti_ai_checker.py <file>` gives a pass, warn or rewrite verdict with the flagged patterns |
 | `design-spike` | `~/dev-tools/skills` | Several design directions as HTML mockups, critiqued |
